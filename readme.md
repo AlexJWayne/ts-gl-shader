@@ -70,7 +70,7 @@ const fragSrc = /* glsl */ `
   }
 ` as const
 
-function createMyShader(gl: WebGL2RenderingContext) {
+export function createMyShader(gl: WebGL2RenderingContext) {
   return createShaderProgram(gl, { vertSrc, fragSrc })
 }
 ```
@@ -79,6 +79,9 @@ Then use and render that shader.
 
 ```typescript
 // index.ts
+
+import { createMyShader } from './my-shader'
+
 function startGame(gl: WebGL2RenderingContext) {
   const myShader = createMyShader(gl)
 
