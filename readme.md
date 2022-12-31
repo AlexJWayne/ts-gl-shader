@@ -162,7 +162,9 @@ deeply.nested.object.shader.use((shader) => {
 ## `shaderProgram.attributes`
 
 ```typescript
-shaderProgram.attributes[attributeNameHere].set(buffer: WebGLBuffer): void
+shaderProgram
+  .attributes[attributeNameHere]
+    .set(buffer: WebGLBuffer): void
 ```
 
 Sets a shader attribute to a `WebGLBuffer`. The `size` argument to WebGL that sets the number of values per vertex is set for you based on the data type of the attribute. For instance, a `vec3` will set a size of `3`.
@@ -175,7 +177,9 @@ shader.attributes.aVert.set(billboardBuffer)
 ## `shaderProgram.uniforms`
 
 ```typescript
-shaderProgram.uniforms[uniformNameHere].set(...values: UniformSetterArgs): void
+shaderProgram
+  .uniforms[uniformNameHere]
+    .set(...values: UniformSetterArgs): void
 ```
 
 Sets a shader uniform to a specific set of numeric values. The type of this setter function is derived from the type of the uniform in the shader. For instance, a `vec3` would accept three numbers as arguments.
