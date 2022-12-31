@@ -4,6 +4,7 @@
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
+- [Features](#features)
 - [Installation](#installation)
 - [Example](#example)
 - [API Reference](#api-reference)
@@ -11,6 +12,13 @@ This library will parse your GLSL shaders at the type level and provide an easy 
   - [`shaderProgram.use()`](#shaderprogramuse)
   - [`shaderProgram.attributes`](#shaderprogramattributes)
   - [`shaderProgram.uniforms`](#shaderprogramuniforms)
+
+## Features
+
+- Compiles and creates shader programs from vertex and fragment string literals.
+- Provides type safety for setting uniforms and attrubutes.
+- Caches shader locations on creation for you.
+- _FAST!_ Alomst zero overhead from calling the native APIs and allocates no objects or arrays when seting and rendering.
 
 ## Installation
 
