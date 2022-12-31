@@ -1,3 +1,9 @@
+// See this example running at:
+//
+//    https://alexjwayne.github.io/ts-gl-shader/hello-world/
+//
+//
+
 import { createShaderProgram } from '../../src'
 
 // Pass a 2d coordinate straight through.

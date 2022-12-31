@@ -6,7 +6,8 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 
 - [Features](#features)
 - [Installation](#installation)
-- [Example](#example)
+- [Examples](#examples)
+- [Usage](#usage)
 - [API Reference](#api-reference)
   - [`createShaderProgram()`](#createshaderprogram)
   - [`shaderProgram.use()`](#shaderprogramuse)
@@ -34,7 +35,11 @@ And then import the `createShaderProgram` function.
 import { createShaderProgram } from 'ts-gl-shader'
 ```
 
-## Example
+## Examples
+
+- **Hello World**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world/hello-world.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world/) ] Render a simple fullscreen shader.
+
+## Usage
 
 First create a file for your shader.
 
