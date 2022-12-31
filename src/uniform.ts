@@ -66,25 +66,25 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
 
   switch (type) {
     case 'float':
-      return (...values: UniformSetterArgs['float']) => gl.uniform1f(location, ...values)
+      return (n: number) => gl.uniform1f(location, n)
 
     case 'int':
-      return (...values: UniformSetterArgs['int']) => gl.uniform1i(location, ...values)
+      return (n: number) => gl.uniform1i(location, n)
 
     case 'uint':
-      return (...values: UniformSetterArgs['uint']) => gl.uniform1ui(location, ...values)
+      return (n: number) => gl.uniform1ui(location, n)
 
     case 'bool':
-      return (...values: UniformSetterArgs['bool']) => gl.uniform1ui(location, values[0] ? 1 : 0)
+      return (boolean: boolean) => gl.uniform1ui(location, boolean ? 1 : 0)
 
     case 'vec2':
-      return (...values: UniformSetterArgs['vec2']) => gl.uniform2f(location, ...values)
+      return (x: number, y: number) => gl.uniform2f(location, x, y)
 
     case 'vec3':
-      return (...values: UniformSetterArgs['vec3']) => gl.uniform3f(location, ...values)
+      return (x: number, y: number, z: number) => gl.uniform3f(location, x, y, z)
 
     case 'vec4':
-      return (...values: UniformSetterArgs['vec4']) => gl.uniform4f(location, ...values)
+      return (x: number, y: number, z: number, w: number) => gl.uniform4f(location, x, y, z, w)
 
     default:
       throw new Error(`Unsupported uniform type ${type}`)

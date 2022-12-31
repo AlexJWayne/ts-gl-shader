@@ -1,10 +1,10 @@
-import { createAttributes, type ShaderAttributes } from './attribute'
+import { createAttributes, ShaderAttributes } from './attribute'
 import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
 import { RemoveComments, Resolve } from './lib/utility-types'
-import { createUniforms, type ShaderUniforms } from './uniform'
+import { createUniforms, ShaderUniforms } from './uniform'
 
-export type ShaderProgramInternal<
+type ShaderProgramInternal<
   VertSrc extends string,
   FragSrc extends string,
   TCombinedSrc extends string = RemoveComments<`${VertSrc}\n${FragSrc}`>,
