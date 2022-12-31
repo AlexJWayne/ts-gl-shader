@@ -28,7 +28,7 @@ import { createShaderProgram } from 'ts-gl-shader'
 
 ## Example
 
-First create a file your shader.
+First create a file for your shader.
 
 ```typescript
 // my-shader.ts
