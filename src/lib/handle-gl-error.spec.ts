@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { gl } from '../spec/mock-webgl-context';
+
 import { handleGlError } from './handle-gl-error';
-import { gl } from './spec/mock-webgl-context';
 
 describe("handleGlError", () => {
   beforeEach(() => {
