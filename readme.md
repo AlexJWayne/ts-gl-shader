@@ -4,12 +4,27 @@
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
+- [Installation](#installation)
 - [Example](#example)
 - [API Reference](#api-reference)
-  - [`createShaderProgram`](#-createshaderprogram-)
+  - [`createShaderProgram()`](#-createshaderprogram---)
   - [`shaderProgram.use()`](#-shaderprogramuse---)
   - [`shaderProgram.attributes`](#-shaderprogramattributes-)
   - [`shaderProgram.uniforms`](#-shaderprogramuniforms-)
+
+## Installation
+
+Install as a production depedency:
+
+```
+npm install ts-gl-shader
+```
+
+And then import the `createShaderProgram` function:
+
+```typescript
+import { createShaderProgram } from 'ts-gl-shader'
+```
 
 ## Example
 
@@ -17,7 +32,7 @@ Given file for your shader:
 
 ```typescript
 // my-shader.ts
-import { createShaderProgram } from './shader-program'
+import { createShaderProgram } from 'ts-gl-shader'
 
 const vertSrc = /* glsl */ `
   precision mediump float;
@@ -100,7 +115,7 @@ function startGame(gl: WebGL2RenderingContext) {
 
 # API Reference
 
-## `createShaderProgram`
+## `createShaderProgram()`
 
 ```typescript
 createShaderProgram(gl: WebGL2RenderingContext, vertSrc: string, fragSrc: string): ShaderProgram
