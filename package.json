@@ -6,7 +6,8 @@
   "module": "dist/ts-gl-shader.esm.js",
   "scripts": {
     "test": "vitest",
-    "build": "preconstruct build"
+    "build": "preconstruct build",
+    "release": "npm run build && npm publish"
   },
   "author": "Alex Wayne",
   "license": "MIT",
