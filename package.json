@@ -1,0 +1,18 @@
+{
+  "name": "ts-gl-shader",
+  "version": "0.0.1",
+  "description": "Strongly typed no boilerplate WebGL shaders.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "preconstruct": "^1.0.0",
+    "ts-glsl": "^1.0.0",
+    "typescript": "^4.9.4",
+    "vitest": "^0.26.2",
+    "webgl-mock": "^0.1.7"
+  }
+}
