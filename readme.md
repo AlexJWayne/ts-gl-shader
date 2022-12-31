@@ -4,6 +4,13 @@
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
+- [Example](#example)
+- [API Reference](#api-reference)
+  - [`createShaderProgram`](#-createshaderprogram-)
+  - [`shaderProgram.use()`](#-shaderprogramuse---)
+  - [`shaderProgram.attributes`](#-shaderprogramattributes-)
+  - [`shaderProgram.uniforms`](#-shaderprogramuniforms-)
+
 ## Example
 
 Given file for your shader:
@@ -91,7 +98,7 @@ function startGame(gl: WebGL2RenderingContext) {
 }
 ```
 
-# API
+# API Reference
 
 ## `createShaderProgram`
 
