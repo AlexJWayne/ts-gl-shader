@@ -1,13 +1,15 @@
 {
   "name": "ts-gl-shader",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Strongly typed no boilerplate WebGL shaders.",
   "main": "dist/ts-gl-shader.cjs.js",
   "module": "dist/ts-gl-shader.esm.js",
   "scripts": {
+    "tsc": "tsc --noEmit --incremental",
     "test": "vitest",
     "build": "preconstruct build",
-    "release": "npm run build && npm publish"
+    "check": "npm run tsc && npm test -- run && npm run build",
+    "release": "npm run check && npm publish"
   },
   "repository": {
     "type": "git",
