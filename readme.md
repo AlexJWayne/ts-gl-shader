@@ -143,6 +143,7 @@ shaderProgram.use(fn?: (shaderProgram: ShaderProgram)): void
 Activates the shader program so that its attributes and uniforms may be set, and the shader may be rendered. This _must_ be called before setting any values or rendering.
 
 ```typescript
+// example
 shader.use()
 // set attributes
 // set uniforms
@@ -152,6 +153,7 @@ shader.use()
 The method optionally accepts a callback that provides the shader program `use()` was called on, which can reduce verbosity and provide a nice indent for the body of code that works with the shader.
 
 ```typescript
+// example
 deeply.nested.object.shader.use((shader) => {
   // set attributes
   // set uniforms
@@ -170,6 +172,7 @@ shaderProgram
 Sets a shader attribute to a `WebGLBuffer`. The `size` argument to WebGL that sets the number of values per vertex is set for you based on the data type of the attribute. For instance, a `vec3` will set a size of `3`.
 
 ```typescript
+// example
 shader.use()
 shader.attributes.aVert.set(billboardBuffer)
 ```
@@ -185,6 +188,7 @@ shaderProgram
 Sets a shader uniform to a specific set of numeric values. The type of this setter function is derived from the type of the uniform in the shader. For instance, a `vec3` would accept three numbers as arguments.
 
 ```typescript
+// example
 shader.use()
 shader.uniforms.uColor.set(1, 0, 1, 1) // magenta
 ```
