@@ -118,7 +118,11 @@ function startGame(gl: WebGL2RenderingContext) {
 ## `createShaderProgram()`
 
 ```typescript
-createShaderProgram(gl: WebGL2RenderingContext, vertSrc: string, fragSrc: string): ShaderProgram
+createShaderProgram(
+  gl: WebGL2RenderingContext,
+  vertSrc: string,
+  fragSrc: string
+): ShaderProgram
 ```
 
 Creates and returns a shader program that can be used for rendering.
