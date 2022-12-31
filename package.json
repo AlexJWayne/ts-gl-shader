@@ -1,6 +1,6 @@
 {
   "name": "ts-gl-shader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Strongly typed no boilerplate WebGL shaders.",
   "main": "dist/ts-gl-shader.cjs.js",
   "module": "dist/ts-gl-shader.esm.js",
