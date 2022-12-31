@@ -7,10 +7,10 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 - [Installation](#installation)
 - [Example](#example)
 - [API Reference](#api-reference)
-  - [`createShaderProgram()`](#-createshaderprogram---)
-  - [`shaderProgram.use()`](#-shaderprogramuse---)
-  - [`shaderProgram.attributes`](#-shaderprogramattributes-)
-  - [`shaderProgram.uniforms`](#-shaderprogramuniforms-)
+  - [`createShaderProgram()`](#createshaderprogram)
+  - [`shaderProgram.use()`](#shaderprogramuse)
+  - [`shaderProgram.attributes`](#shaderprogramattributes)
+  - [`shaderProgram.uniforms`](#shaderprogramuniforms)
 
 ## Installation
 
