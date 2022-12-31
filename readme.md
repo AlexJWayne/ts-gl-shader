@@ -14,13 +14,13 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 
 ## Installation
 
-Install as a production depedency:
+Install the library as a production depedency.
 
 ```
 npm install ts-gl-shader
 ```
 
-And then import the `createShaderProgram` function:
+And then import the `createShaderProgram` function.
 
 ```typescript
 import { createShaderProgram } from 'ts-gl-shader'
@@ -28,7 +28,7 @@ import { createShaderProgram } from 'ts-gl-shader'
 
 ## Example
 
-Given file for your shader:
+First create a file your shader.
 
 ```typescript
 // my-shader.ts
@@ -75,7 +75,7 @@ function createMyShader(gl: WebGL2RenderingContext) {
 }
 ```
 
-You would render that shader like:
+Then use and render that shader.
 
 ```typescript
 // index.ts
@@ -133,7 +133,7 @@ const shader = createShaderProgram(gl, `vertex shader source`, `fragment shader 
 ## `shaderProgram.use()`
 
 ```typescript
-shaderProgram.use(fn?: (shaderProgram: ShaderProgram)): void`
+shaderProgram.use(fn?: (shaderProgram: ShaderProgram)): void
 ```
 
 Activates the shader program so that its attributes and uniforms may be set, and the shader may be rendered. This _must_ be called before setting any values or rendering.
