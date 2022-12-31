@@ -112,7 +112,11 @@ function startGame(gl: WebGL2RenderingContext) {
     // This library does not make any draw calls for you
     // But it's easy to do yourself.
     gl.drawArrays(gl.TRIANGLES, 0, triangleCount)
+
+    requestAnimationFrame(render)
   }
+
+  requestAnimationFrame(render)
 }
 ```
 
