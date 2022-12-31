@@ -4,6 +4,17 @@
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
+## Work in Progress
+
+This library is current a work in progress. Still to come for 1.0:
+
+- [ ] Setting matrix uniforms.
+- [ ] Setting uniforms from typed arrays.
+- [ ] Ability to monitor set values for tests.
+- [ ] A 3D example.
+
+## Table of Contents
+
 - [Features](#features)
 - [Installation](#installation)
 - [Examples](#examples)
