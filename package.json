@@ -1,6 +1,6 @@
 {
   "name": "ts-gl-shader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Strongly typed no boilerplate WebGL shaders.",
   "main": "dist/ts-gl-shader.cjs.js",
   "module": "dist/ts-gl-shader.esm.js",
@@ -8,6 +8,10 @@
     "test": "vitest",
     "build": "preconstruct build",
     "release": "npm run build && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlexJWayne/ts-gl-shader"
   },
   "author": "Alex Wayne",
   "license": "MIT",
