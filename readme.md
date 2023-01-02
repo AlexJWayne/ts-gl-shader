@@ -2,7 +2,7 @@
 
 > _Strongly typed no boilerplate WebGL shaders._
 
-<img width="698" alt="image" src="https://user-images.githubusercontent.com/482/210217998-46cf79ad-f7ae-497b-a4e1-b8ebd3fc5d4b.png">
+<img width="990" alt="image" src="https://user-images.githubusercontent.com/482/210218735-90f14598-6fe2-455e-aa51-78bdb4ce2727.png">
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
