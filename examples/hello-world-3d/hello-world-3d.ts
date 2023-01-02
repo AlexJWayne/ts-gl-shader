@@ -1,6 +1,6 @@
 // See this example running at:
 //
-//    https://alexjwayne.github.io/ts-gl-shader/hello-world/
+//    https://alexjwayne.github.io/ts-gl-shader/hello-world-3d/
 //
 //
 
