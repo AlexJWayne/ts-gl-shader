@@ -1,6 +1,6 @@
 {
   "name": "ts-gl-shader",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Strongly typed no boilerplate WebGL shaders.",
   "main": "dist/ts-gl-shader.cjs.js",
   "module": "dist/ts-gl-shader.esm.js",
@@ -9,7 +9,7 @@
     "test": "vitest",
     "build": "npm run build:lib && npm run build:examples",
     "build:lib": "preconstruct build",
-    "build:examples": "vite build examples/hello-world",
+    "build:examples": "vite build examples/hello-world && vite build examples/hello-world-3d",
     "check": "npm i && npm run tsc && npm test -- run && npm run build",
     "deploy": "gh-pages -d examples/dist",
     "release": "npm run check && npm run deploy && npm publish"

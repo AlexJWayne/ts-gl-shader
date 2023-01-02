@@ -8,10 +8,10 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 
 This library is current a work in progress. Still to come for 1.0:
 
-- [ ] Setting matrix uniforms.
+- [x] Setting matrix uniforms.
 - [ ] Setting uniforms from typed arrays.
 - [ ] Ability to monitor set values for tests.
-- [ ] A 3D example.
+- [x] A 3D example.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ import { createShaderProgram } from 'ts-gl-shader'
 ## Examples
 
 - **Hello World**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world/hello-world.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world/) ] Render a simple fullscreen shader.
-- **Spinning Cube**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world-3d/hello-world.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world-3d/) ] Render a cube that spins in the viewport
+- **Spinning Cube**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world-3d/hello-world-3d.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world-3d/) ] Render a cube that spins in the viewport
 
 ## Usage
 

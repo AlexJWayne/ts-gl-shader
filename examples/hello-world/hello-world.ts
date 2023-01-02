@@ -38,7 +38,7 @@ function start() {
   const buffer = createQuad(gl)
 
   // Create the shader program
-  const shader = createShaderProgram(gl, { vertSrc, fragSrc })
+  const shader = createShaderProgram(gl, vertSrc, fragSrc)
 
   function render() {
     // Use the shader program and set its data

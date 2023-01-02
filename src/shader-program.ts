@@ -22,7 +22,8 @@ export type ShaderProgram<VertSrc extends string, FragSrc extends string> = Reso
 
 export function createShaderProgram<VertSrc extends string, FragSrc extends string>(
   gl: WebGL2RenderingContext,
-  { vertSrc, fragSrc }: { vertSrc: VertSrc; fragSrc: FragSrc },
+  vertSrc: VertSrc,
+  fragSrc: FragSrc,
 ): ShaderProgram<VertSrc, FragSrc> {
   const glProgram = createProgram(gl, vertSrc, fragSrc)
 

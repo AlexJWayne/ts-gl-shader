@@ -95,7 +95,7 @@ describe('createShaderProgram()', () => {
           const location = { someUniformLocationId: 123 }
           vi.spyOn(gl, 'getUniformLocation').mockReturnValue(location)
 
-          const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+          const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
           vi.spyOn(gl, glUniformSetter)
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,7 +140,7 @@ describe('createShaderProgram()', () => {
       )
 
       it('throws if a mat2 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
         const uniform = shaderProgram.uniforms.uMat2
         expect(() => uniform.set(new Float32Array([1, 2, 3]))).toThrowError(
           'Expected an array of length 4 to set a mat2 uniform. Got 3.',
@@ -148,7 +148,7 @@ describe('createShaderProgram()', () => {
       })
 
       it('throws if a mat3 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
         const uniform = shaderProgram.uniforms.uMat3
         expect(() => uniform.set(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8]))).toThrowError(
           'Expected an array of length 9 to set a mat3 uniform. Got 8.',
@@ -156,7 +156,7 @@ describe('createShaderProgram()', () => {
       })
 
       it('throws if a mat4 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
         const uniform = shaderProgram.uniforms.uMat4
         expect(() => uniform.set(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))).toThrowError(
           'Expected an array of length 16 to set a mat4 uniform. Got 11.',
@@ -190,7 +190,7 @@ describe('createShaderProgram()', () => {
           const location = 123
           vi.spyOn(gl, 'getAttribLocation').mockReturnValue(location)
 
-          const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+          const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
 
           vi.spyOn(gl, 'bindBuffer')
           vi.spyOn(gl, 'vertexAttribPointer')

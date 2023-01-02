@@ -59,7 +59,7 @@ function start() {
   const cubeVerts = createCube(gl)
 
   // Create the shader program
-  const shader = createShaderProgram(gl, { vertSrc, fragSrc })
+  const shader = createShaderProgram(gl, vertSrc, fragSrc)
 
   // TESTING
   shader.uniforms.uMatrix
