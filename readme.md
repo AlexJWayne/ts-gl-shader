@@ -14,6 +14,7 @@ This library is current a work in progress. Still to come for 1.0:
 - [ ] Setting uniforms from typed arrays.
 - [ ] Ability to monitor set values for tests.
 - [x] A 3D example.
+- [ ] Set vector arrays like `uniform vec3[] uPoints[10]`.
 
 ## Table of Contents
 

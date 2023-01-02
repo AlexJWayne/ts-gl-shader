@@ -74,10 +74,45 @@ describe('createShaderProgram()', () => {
         }>()
       })
 
-      it('provides types for a matrix uniform array', () => {
+      it('provides types for a 2x2 matrix uniform array', () => {
         expectTypeOf<TestShader['uniforms']['uMat2']>().toMatchTypeOf<{
           type: 'mat2'
           set(values2x2: [number, number, number, number] | Float32Array): void
+        }>()
+      })
+
+      it('provides types for a 3x3 matrix uniform array', () => {
+        expectTypeOf<TestShader['uniforms']['uMat3']>().toMatchTypeOf<{
+          type: 'mat3'
+          set(values3x3: [number, number, number, number, number, number, number, number, number] | Float32Array): void
+        }>()
+      })
+
+      it('provides types for a 4x4 matrix uniform array', () => {
+        expectTypeOf<TestShader['uniforms']['uMat4']>().toMatchTypeOf<{
+          type: 'mat4'
+          set(
+            values4x4:
+              | [
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                  number,
+                ]
+              | Float32Array,
+          ): void
         }>()
       })
     })
@@ -86,6 +121,7 @@ describe('createShaderProgram()', () => {
       function testUniformSetter(
         type: string,
         uniformName: keyof GlslVarsInfo<`${typeof fragSrc}${typeof vertSrc}`, 'uniform'>,
+        setterName: 'set' | 'setArray',
         glUniformSetter: Extract<keyof WebGL2RenderingContext, `uniform${string}`>,
         values: unknown[],
         expected = values,
@@ -99,7 +135,8 @@ describe('createShaderProgram()', () => {
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const uniform = shaderProgram.uniforms[uniformName] as any
-          uniform.set(...values)
+          const setter = uniform[setterName]
+          setter(...values)
 
           // console.log({ values, expected })
 
@@ -107,59 +144,104 @@ describe('createShaderProgram()', () => {
         })
       }
 
-      testUniformSetter('float', 'uFloat', 'uniform1f', [1])
-      testUniformSetter('int', 'uInt', 'uniform1i', [1])
-      testUniformSetter('uint', 'uUnsignedInt', 'uniform1ui', [1])
-      testUniformSetter('bool', 'uBool', 'uniform1ui', [true], [1])
-      testUniformSetter('vec2', 'uVec2', 'uniform2f', [1, 2])
-      testUniformSetter('vec3', 'uVec3', 'uniform3f', [1, 2, 3])
-      testUniformSetter('vec4', 'uVec4', 'uniform4f', [1, 2, 3, 4])
-      testUniformSetter('mat2', 'uMat2', 'uniformMatrix2fv', [[1, 2, 3, 4]], [false, [1, 2, 3, 4]])
-      testUniformSetter(
-        'mat3',
-        'uMat3',
-        'uniformMatrix3fv',
-        [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
-        [false, [1, 2, 3, 4, 5, 6, 7, 8, 9]],
-      )
-      testUniformSetter(
-        'mat4',
-        'uMat4',
-        'uniformMatrix4fv',
-        [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
-        [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
-      )
+      describe('single values', () => {
+        describe('set with discrete arguments', () => {
+          testUniformSetter('float', 'uFloat', 'set', 'uniform1f', [1])
+          testUniformSetter('int', 'uInt', 'set', 'uniform1i', [1])
+          testUniformSetter('uint', 'uUnsignedInt', 'set', 'uniform1ui', [1])
+          testUniformSetter('bool', 'uBool', 'set', 'uniform1ui', [true], [1])
+          testUniformSetter('vec2', 'uVec2', 'set', 'uniform2f', [1, 2])
+          testUniformSetter('vec3', 'uVec3', 'set', 'uniform3f', [1, 2, 3])
+          testUniformSetter('vec4', 'uVec4', 'set', 'uniform4f', [1, 2, 3, 4])
+        })
 
-      testUniformSetter(
-        'mat2',
-        'uMat2',
-        'uniformMatrix2fv',
-        [new Float32Array([1, 2, 3, 4])],
-        [false, new Float32Array([1, 2, 3, 4])],
-      )
-
-      it('throws if a mat2 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
-        const uniform = shaderProgram.uniforms.uMat2
-        expect(() => uniform.set(new Float32Array(3).fill(0))).toThrowError(
-          'Expected an array of length 4 to set a mat2 uniform. Got 3.',
-        )
+        describe('set with number[]', () => {
+          // testUniformSetter('float', 'uFloat', 'set', 'uniform1fv', [1])
+        })
       })
 
-      it('throws if a mat3 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
-        const uniform = shaderProgram.uniforms.uMat3
-        expect(() => uniform.set(new Float32Array(8).fill(0))).toThrowError(
-          'Expected an array of length 9 to set a mat3 uniform. Got 8.',
-        )
+      describe('matrices', () => {
+        describe('set with number[]', () => {
+          testUniformSetter(
+            'mat2', //
+            'uMat2',
+            'set',
+            'uniformMatrix2fv',
+            [[1, 2, 3, 4]],
+            [false, [1, 2, 3, 4]],
+          )
+          testUniformSetter(
+            'mat3',
+            'uMat3',
+            'set',
+            'uniformMatrix3fv',
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
+            [false, [1, 2, 3, 4, 5, 6, 7, 8, 9]],
+          )
+          testUniformSetter(
+            'mat4',
+            'uMat4',
+            'set',
+            'uniformMatrix4fv',
+            [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+            [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+          )
+        })
+
+        describe('set with typed arrays', () => {
+          testUniformSetter(
+            'mat2',
+            'uMat2',
+            'set',
+            'uniformMatrix2fv',
+            [new Float32Array(4).fill(0)],
+            [false, new Float32Array(4).fill(0)],
+          )
+
+          testUniformSetter(
+            'mat3',
+            'uMat3',
+            'set',
+            'uniformMatrix3fv',
+            [new Float32Array(9).fill(0)],
+            [false, new Float32Array(9).fill(0)],
+          )
+
+          testUniformSetter(
+            'mat4',
+            'uMat4',
+            'set',
+            'uniformMatrix4fv',
+            [new Float32Array(16).fill(0)],
+            [false, new Float32Array(16).fill(0)],
+          )
+        })
       })
 
-      it('throws if a mat4 is set by a Float32Array of an incorrect length', () => {
-        const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
-        const uniform = shaderProgram.uniforms.uMat4
-        expect(() => uniform.set(new Float32Array(11).fill(0))).toThrowError(
-          'Expected an array of length 16 to set a mat4 uniform. Got 11.',
-        )
+      describe('length validation', () => {
+        it('throws if a mat2 is set by a Float32Array of an incorrect length', () => {
+          const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
+          const uniform = shaderProgram.uniforms.uMat2
+          expect(() => uniform.set(new Float32Array(3).fill(0))).toThrowError(
+            'Expected an array of length 4 to set a mat2 uniform. Got 3.',
+          )
+        })
+
+        it('throws if a mat3 is set by a Float32Array of an incorrect length', () => {
+          const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
+          const uniform = shaderProgram.uniforms.uMat3
+          expect(() => uniform.set(new Float32Array(8).fill(0))).toThrowError(
+            'Expected an array of length 9 to set a mat3 uniform. Got 8.',
+          )
+        })
+
+        it('throws if a mat4 is set by a Float32Array of an incorrect length', () => {
+          const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
+          const uniform = shaderProgram.uniforms.uMat4
+          expect(() => uniform.set(new Float32Array(11).fill(0))).toThrowError(
+            'Expected an array of length 16 to set a mat4 uniform. Got 11.',
+          )
+        })
       })
     })
   })
