@@ -23,7 +23,6 @@ describe('createShaderProgram()', () => {
     uniform float uFloat;
     uniform bool uBool;
 
-
     varying vec2 vUV;
 
     void main() {
