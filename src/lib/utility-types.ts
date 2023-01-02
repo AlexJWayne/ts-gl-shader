@@ -1,6 +1,8 @@
 /** Copies the structure of T, but resolves all named types to the their verbose form. */
 export type Resolve<T> = //
-  T extends (...args: infer TArgs) => infer TReturn
+  T extends Iterable<number>
+    ? Iterable<number>
+    : T extends (...args: infer TArgs) => infer TReturn
     ? (...args: Resolve<TArgs>) => Resolve<TReturn>
     : T extends object
     ? T extends infer TObject

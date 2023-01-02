@@ -9,9 +9,9 @@ export type TGlslVarType =
   | 'uint'
   | 'float'
   | `vec${2 | 3 | 4}`
+  | `mat${2 | 3 | 4}`
 // | 'double'
 // | `${'' | 'u' | 'i' | 'b'}vec${2 | 3 | 4}`
-// | `mat${2 | 3 | 4}`
 // | `${'' | 'u' | 'i'}sampler${1 | 2 | 3}D`
 
 /** Returns an object type with every uniform or attribute. */

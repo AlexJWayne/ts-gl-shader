@@ -49,6 +49,7 @@ import { createShaderProgram } from 'ts-gl-shader'
 ## Examples
 
 - **Hello World**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world/hello-world.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world/) ] Render a simple fullscreen shader.
+- **Spinning Cube**: [ [code](https://github.com/AlexJWayne/ts-gl-shader/blob/main/examples/hello-world-3d/hello-world.ts) | [view](https://alexjwayne.github.io/ts-gl-shader/hello-world-3d/) ] Render a cube that spins in the viewport
 
 ## Usage
 

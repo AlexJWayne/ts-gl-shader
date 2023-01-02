@@ -9,6 +9,9 @@ export type UniformSetterArgs = {
   vec2: [x: number, y: number]
   vec3: [x: number, y: number, z: number]
   vec4: [x: number, y: number, z: number, w: number]
+  mat2: [Iterable<number>]
+  mat3: [Iterable<number>]
+  mat4: [Iterable<number>]
   // TODO: matrix types?
 }
 
@@ -85,6 +88,15 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
 
     case 'vec4':
       return (x: number, y: number, z: number, w: number) => gl.uniform4f(location, x, y, z, w)
+
+    case 'mat2':
+      return (values: Iterable<number>) => gl.uniformMatrix2fv(location, false, values)
+
+    case 'mat3':
+      return (values: Iterable<number>) => gl.uniformMatrix3fv(location, false, values)
+
+    case 'mat4':
+      return (values: Iterable<number>) => gl.uniformMatrix4fv(location, false, values)
 
     default:
       throw new Error(`Unsupported uniform type ${type}`)

@@ -15,9 +15,14 @@ describe('createShaderProgram()', () => {
     uniform vec2 uVec2;
     uniform vec3 uVec3;
     uniform vec4 uVec4;
+    
+    uniform mat2 uMat2;
+    uniform mat3 uMat3;
+    uniform mat4 uMat4;
 
     uniform float uFloat;
     uniform bool uBool;
+
 
     varying vec2 vUV;
 
@@ -50,7 +55,16 @@ describe('createShaderProgram()', () => {
     describe('types', () => {
       it('has a property for each uniform', () => {
         expectTypeOf<keyof TestShader['uniforms']>().toMatchTypeOf<
-          'uVec2' | 'uVec3' | 'uVec4' | 'uFloat' | 'uBool' | 'uInt' | 'uUnsignedInt'
+          | 'uVec2' //
+          | 'uVec3'
+          | 'uVec4'
+          | 'uFloat'
+          | 'uBool'
+          | 'uInt'
+          | 'uUnsignedInt'
+          | 'uMat2'
+          | 'uMat3'
+          | 'uMat4'
         >()
       })
 
@@ -81,6 +95,8 @@ describe('createShaderProgram()', () => {
           const uniform = shaderProgram.uniforms[uniformName] as any
           uniform.set(...values)
 
+          // console.log({ values, expected })
+
           expect(gl[glUniformSetter]).toHaveBeenCalledWith(location, ...expected)
         })
       }
@@ -92,6 +108,21 @@ describe('createShaderProgram()', () => {
       testUniformSetter('vec2', 'uVec2', 'uniform2f', [1, 2])
       testUniformSetter('vec3', 'uVec3', 'uniform3f', [1, 2, 3])
       testUniformSetter('vec4', 'uVec4', 'uniform4f', [1, 2, 3, 4])
+      testUniformSetter('mat2', 'uMat2', 'uniformMatrix2fv', [[1, 2, 3, 4]], [false, [1, 2, 3, 4]])
+      testUniformSetter(
+        'mat3',
+        'uMat3',
+        'uniformMatrix3fv',
+        [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
+        [false, [1, 2, 3, 4, 5, 6, 7, 8, 9]],
+      )
+      testUniformSetter(
+        'mat4',
+        'uMat4',
+        'uniformMatrix4fv',
+        [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+        [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+      )
     })
   })
 
