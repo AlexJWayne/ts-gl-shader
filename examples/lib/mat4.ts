@@ -1,5 +1,7 @@
+import { Mat4v } from '../../src/uniform'
+
 export const mat4 = {
-  perspective: function (fieldOfViewInRadians: number, aspect: number, near: number, far: number) {
+  perspective: function (fieldOfViewInRadians: number, aspect: number, near: number, far: number): Mat4v {
     var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians)
     var rangeInv = 1.0 / (near - far)
 
@@ -30,7 +32,7 @@ export const mat4 = {
     ]
   },
 
-  projection: function (width: number, height: number, depth: number) {
+  projection: function (width: number, height: number, depth: number): Mat4v {
     // Note: This matrix flips the Y axis so 0 is at the top.
     return [
       2 / width,
@@ -58,7 +60,7 @@ export const mat4 = {
     ]
   },
 
-  multiply: function (a: number[], b: number[]) {
+  multiply: function (a: Readonly<Mat4v>, b: Readonly<Mat4v>): Mat4v {
     var a00 = a[0 * 4 + 0]
     var a01 = a[0 * 4 + 1]
     var a02 = a[0 * 4 + 2]
@@ -111,52 +113,52 @@ export const mat4 = {
     ]
   },
 
-  translation: function (tx: number, ty: number, tz: number) {
+  translation: function (tx: number, ty: number, tz: number): Mat4v {
     return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1]
   },
 
-  xRotation: function (angleInRadians: number) {
+  xRotation: function (angleInRadians: number): Mat4v {
     var c = Math.cos(angleInRadians)
     var s = Math.sin(angleInRadians)
 
     return [1, 0, 0, 0, 0, c, s, 0, 0, -s, c, 0, 0, 0, 0, 1]
   },
 
-  yRotation: function (angleInRadians: number) {
+  yRotation: function (angleInRadians: number): Mat4v {
     var c = Math.cos(angleInRadians)
     var s = Math.sin(angleInRadians)
 
     return [c, 0, -s, 0, 0, 1, 0, 0, s, 0, c, 0, 0, 0, 0, 1]
   },
 
-  zRotation: function (angleInRadians: number) {
+  zRotation: function (angleInRadians: number): Mat4v {
     var c = Math.cos(angleInRadians)
     var s = Math.sin(angleInRadians)
 
     return [c, s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   },
 
-  scaling: function (sx: number, sy: number, sz: number) {
+  scaling: function (sx: number, sy: number, sz: number): Mat4v {
     return [sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1]
   },
 
-  translate: function (m: number[], tx: number, ty: number, tz: number) {
+  translate: function (m: Mat4v, tx: number, ty: number, tz: number): Mat4v {
     return mat4.multiply(m, mat4.translation(tx, ty, tz))
   },
 
-  xRotate: function (m: number[], angleInRadians: number) {
+  xRotate: function (m: Mat4v, angleInRadians: number): Mat4v {
     return mat4.multiply(m, mat4.xRotation(angleInRadians))
   },
 
-  yRotate: function (m: number[], angleInRadians: number) {
+  yRotate: function (m: Mat4v, angleInRadians: number): Mat4v {
     return mat4.multiply(m, mat4.yRotation(angleInRadians))
   },
 
-  zRotate: function (m: number[], angleInRadians: number) {
+  zRotate: function (m: Mat4v, angleInRadians: number): Mat4v {
     return mat4.multiply(m, mat4.zRotation(angleInRadians))
   },
 
-  scale: function (m: number[], sx: number, sy: number, sz: number) {
+  scale: function (m: Mat4v, sx: number, sy: number, sz: number): Mat4v {
     return mat4.multiply(m, mat4.scaling(sx, sy, sz))
   },
 }

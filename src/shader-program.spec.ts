@@ -74,6 +74,13 @@ describe('createShaderProgram()', () => {
           set(x: number, y: number): void
         }>()
       })
+
+      it('provides types for a matrix uniform array', () => {
+        expectTypeOf<TestShader['uniforms']['uMat2']>().toMatchTypeOf<{
+          type: 'mat2'
+          set(values2x2: [number, number, number, number] | Float32Array): void
+        }>()
+      })
     })
 
     describe('setters', () => {
@@ -123,6 +130,38 @@ describe('createShaderProgram()', () => {
         [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
         [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
       )
+
+      testUniformSetter(
+        'mat2',
+        'uMat2',
+        'uniformMatrix2fv',
+        [new Float32Array([1, 2, 3, 4])],
+        [false, new Float32Array([1, 2, 3, 4])],
+      )
+
+      it('throws if a mat2 is set by a Float32Array of an incorrect length', () => {
+        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const uniform = shaderProgram.uniforms.uMat2
+        expect(() => uniform.set(new Float32Array([1, 2, 3]))).toThrowError(
+          'Expected an array of length 4 to set a mat2 uniform. Got 3.',
+        )
+      })
+
+      it('throws if a mat3 is set by a Float32Array of an incorrect length', () => {
+        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const uniform = shaderProgram.uniforms.uMat3
+        expect(() => uniform.set(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8]))).toThrowError(
+          'Expected an array of length 9 to set a mat3 uniform. Got 8.',
+        )
+      })
+
+      it('throws if a mat4 is set by a Float32Array of an incorrect length', () => {
+        const shaderProgram = createShaderProgram(gl, { vertSrc, fragSrc })
+        const uniform = shaderProgram.uniforms.uMat4
+        expect(() => uniform.set(new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))).toThrowError(
+          'Expected an array of length 16 to set a mat4 uniform. Got 11.',
+        )
+      })
     })
   })
 

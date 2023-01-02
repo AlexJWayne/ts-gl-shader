@@ -37,7 +37,8 @@ const fragSrc = /* glsl */ `
   varying vec3 vVert;
 
   float lines(float val) {
-    return step(mod(val, 5.0), uLineWidth);
+    val += 0.5;
+    return step(mod(val, 1.0), uLineWidth);
   }
 
   void main() {
@@ -59,7 +60,9 @@ function start() {
 
   // Create the shader program
   const shader = createShaderProgram(gl, { vertSrc, fragSrc })
-  shader.uniforms.uMainColor.set(1, 0, 0, 1)
+
+  // TESTING
+  shader.uniforms.uMatrix
 
   let projection = mat4.perspective(Math.PI * 0.2, canvas.clientWidth / canvas.clientHeight, 1, 2000)
   projection = mat4.translate(projection, 0, 0, -1000)
@@ -76,16 +79,14 @@ function start() {
     cubeMatrix = mat4.zRotate(cubeMatrix, -time * 0.5)
     cubeMatrix = mat4.scale(cubeMatrix, 100, 100, 100)
 
-    // Use the shader program and set its data
+    // Use the shader program and set its data.
     shader.use()
-
     shader.attributes.aVert.set(cubeVerts)
-
     shader.uniforms.uProjection.set(projection)
     shader.uniforms.uMatrix.set(cubeMatrix)
     shader.uniforms.uMainColor.set(0, 0, 1, 1)
     shader.uniforms.uLineColor.set(1, 0, 1, 1)
-    shader.uniforms.uLineWidth.set(0.1)
+    shader.uniforms.uLineWidth.set(0.05)
 
     // Render
     gl.drawArrays(gl.TRIANGLES, 0, 6 * 6)

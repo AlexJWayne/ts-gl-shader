@@ -1,6 +1,32 @@
 import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
 
+// 2x2 matrix = 4 elements
+export type Mat2v = [number, number, number, number]
+
+// 3x3 matrix = 9 elements
+export type Mat3v = [number, number, number, number, number, number, number, number, number]
+
+// 4x4 matrix = 16 elements
+export type Mat4v = [
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+]
+
 export type UniformSetterArgs = {
   float: [n: number]
   bool: [bool: boolean]
@@ -9,9 +35,9 @@ export type UniformSetterArgs = {
   vec2: [x: number, y: number]
   vec3: [x: number, y: number, z: number]
   vec4: [x: number, y: number, z: number, w: number]
-  mat2: [Iterable<number>]
-  mat3: [Iterable<number>]
-  mat4: [Iterable<number>]
+  mat2: [values2x2: Mat2v | Float32Array]
+  mat3: [values3x3: Mat3v | Float32Array]
+  mat4: [values4x4: Mat4v | Float32Array]
   // TODO: matrix types?
 }
 
@@ -90,15 +116,28 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
       return (x: number, y: number, z: number, w: number) => gl.uniform4f(location, x, y, z, w)
 
     case 'mat2':
-      return (values: Iterable<number>) => gl.uniformMatrix2fv(location, false, values)
+      return (values: Mat2v | Float32Array) => {
+        if (values.length !== 4) throwIncorrectLengthError('mat2', 4, values.length)
+        return gl.uniformMatrix2fv(location, false, values)
+      }
 
     case 'mat3':
-      return (values: Iterable<number>) => gl.uniformMatrix3fv(location, false, values)
+      return (values: Mat3v | Float32Array) => {
+        if (values.length !== 9) throwIncorrectLengthError('mat3', 9, values.length)
+        return gl.uniformMatrix3fv(location, false, values)
+      }
 
     case 'mat4':
-      return (values: Iterable<number>) => gl.uniformMatrix4fv(location, false, values)
+      return (values: Mat4v | Float32Array) => {
+        if (values.length !== 16) throwIncorrectLengthError('mat4', 16, values.length)
+        return gl.uniformMatrix4fv(location, false, values)
+      }
 
     default:
       throw new Error(`Unsupported uniform type ${type}`)
   }
+}
+
+function throwIncorrectLengthError(glslType: string, expectedLength: number, actualLength: number) {
+  throw new Error(`Expected an array of length ${expectedLength} to set a ${glslType} uniform. Got ${actualLength}.`)
 }
