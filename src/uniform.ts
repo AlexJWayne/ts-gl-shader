@@ -35,10 +35,15 @@ export type UniformSetterArgs = {
   vec2: [x: number, y: number]
   vec3: [x: number, y: number, z: number]
   vec4: [x: number, y: number, z: number, w: number]
-  mat2: [values2x2: Mat2v | Float32Array]
-  mat3: [values3x3: Mat3v | Float32Array]
-  mat4: [values4x4: Mat4v | Float32Array]
-  // TODO: matrix types?
+  mat2: [values2x2: Mat2v | Float32Array | Float64Array]
+  mat3: [values3x3: Mat3v | Float32Array | Float64Array]
+  mat4: [values4x4: Mat4v | Float32Array | Float64Array]
+}
+
+export type UniformSetterArrayArgs = {
+  vec2: UniformSetterArgs['vec2'] | Float32Array | Float64Array
+  vec3: UniformSetterArgs['vec3'] | Float32Array | Float64Array
+  vec4: UniformSetterArgs['vec4'] | Float32Array | Float64Array
 }
 
 /** Type of the `uniforms` property of the shader object. */
@@ -52,7 +57,11 @@ export type ShaderUniforms<T extends GlslVarsInfo<string, 'uniform'>> = {
 export type ShaderUniform<TType extends keyof UniformSetterArgs> = {
   type: TType
   set(...values: UniformSetterArgs[TType]): void
-}
+} & (TType extends keyof UniformSetterArrayArgs
+  ? {
+      setArray(values: TType extends keyof UniformSetterArrayArgs ? UniformSetterArrayArgs[TType] : never): void
+    }
+  : {})
 
 export function createUniforms<
   ShaderSrc extends string,
@@ -64,7 +73,7 @@ export function createUniforms<
   return uniformDeclarations.reduce((uniforms, uniformDeclaration) => {
     const tokens = uniformDeclaration.split(' ') as ['uniform', keyof UniformSetterArgs, string]
     const type = tokens[1]
-    const name = tokens[2].replace(/;$/, '') as keyof Return & string
+    const name = tokens[2].replace(/;$/, '')
 
     uniforms[name] = createUniform(gl, program, type, name) as any
     return uniforms
@@ -82,7 +91,8 @@ export function createUniform<GlslType extends keyof UniformSetterArgs>(
 
   return {
     type,
-    set: createUniformSetter(gl, location, type),
+    set: createUniformSetter(gl, location, type, name),
+    setArray: createUniformArraySetter(gl, location, type, name),
   }
 }
 
@@ -90,6 +100,7 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
   gl: WebGL2RenderingContext,
   location: WebGLUniformLocation | null,
   type: T,
+  name: string,
 ) {
   if (location === null) return () => undefined
 
@@ -116,21 +127,21 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
       return (x: number, y: number, z: number, w: number) => gl.uniform4f(location, x, y, z, w)
 
     case 'mat2':
-      return (values: Mat2v | Float32Array) => {
-        if (values.length !== 4) throwIncorrectLengthError('mat2', 4, values.length)
-        return gl.uniformMatrix2fv(location, false, values)
+      return (values: Mat2v | Float32Array | Float64Array) => {
+        if (values.length !== 4) throwIncorrectLengthError('mat2', name, 4, values.length)
+        gl.uniformMatrix2fv(location, false, values)
       }
 
     case 'mat3':
-      return (values: Mat3v | Float32Array) => {
-        if (values.length !== 9) throwIncorrectLengthError('mat3', 9, values.length)
-        return gl.uniformMatrix3fv(location, false, values)
+      return (values: Mat3v | Float32Array | Float64Array) => {
+        if (values.length !== 9) throwIncorrectLengthError('mat3', name, 9, values.length)
+        gl.uniformMatrix3fv(location, false, values)
       }
 
     case 'mat4':
-      return (values: Mat4v | Float32Array) => {
-        if (values.length !== 16) throwIncorrectLengthError('mat4', 16, values.length)
-        return gl.uniformMatrix4fv(location, false, values)
+      return (values: Mat4v | Float32Array | Float64Array) => {
+        if (values.length !== 16) throwIncorrectLengthError('mat4', name, 16, values.length)
+        gl.uniformMatrix4fv(location, false, values)
       }
 
     default:
@@ -138,6 +149,39 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
   }
 }
 
-function throwIncorrectLengthError(glslType: string, expectedLength: number, actualLength: number) {
-  throw new Error(`Expected an array of length ${expectedLength} to set a ${glslType} uniform. Got ${actualLength}.`)
+function createUniformArraySetter<T extends keyof UniformSetterArgs>(
+  gl: WebGL2RenderingContext,
+  location: WebGLUniformLocation | null,
+  type: T,
+  identifier: string,
+) {
+  if (location === null) return () => undefined
+
+  switch (type) {
+    case 'vec2':
+      return (values: UniformSetterArrayArgs['vec2']) => {
+        if (values.length !== 2) throwIncorrectLengthError('vec2', identifier, 2, values.length)
+        gl.uniform2fv(location, values)
+      }
+
+    case 'vec3':
+      return (values: UniformSetterArrayArgs['vec3']) => {
+        if (values.length !== 3) throwIncorrectLengthError('vec3', identifier, 3, values.length)
+        gl.uniform3fv(location, values)
+      }
+
+    case 'vec4':
+      return (values: UniformSetterArrayArgs['vec4']) => {
+        if (values.length !== 4) throwIncorrectLengthError('vec4', identifier, 4, values.length)
+        gl.uniform4fv(location, values)
+      }
+  }
+
+  return null
+}
+
+function throwIncorrectLengthError(glslType: string, identifier: string, expectedLength: number, actualLength: number) {
+  throw new Error(
+    `Expected an array of length ${expectedLength} for "${glslType} uniform ${identifier}". Got ${actualLength}.`,
+  )
 }

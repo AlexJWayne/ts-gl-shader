@@ -11,7 +11,7 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 This library is current a work in progress. Still to come for 1.0:
 
 - [x] Setting matrix uniforms.
-- [ ] Setting uniforms from typed arrays.
+- [x] Setting uniforms from typed arrays.
 - [ ] Ability to monitor set values for tests.
 - [x] A 3D example.
 - [ ] Set vector arrays like `uniform vec3[] uPoints[10]`.
