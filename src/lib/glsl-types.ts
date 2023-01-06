@@ -1,9 +1,9 @@
-import { RemoveComments } from './utility-types'
+import { ParseTokens, RemoveComments } from './utility-types'
 
 export type GlslVarQualifier = 'uniform' | 'attribute'
 
 /** All supported GLSL var types. */
-export type TGlslVarType =
+export type GlslVarType =
   | 'bool' //
   | 'int'
   | 'uint'
@@ -18,6 +18,8 @@ export type TGlslVarType =
 export type GlslVarsInfo<
   TSrc extends string,
   TQualifier extends GlslVarQualifier,
-> = RemoveComments<TSrc> extends `${string}${TQualifier} ${infer TVarType extends TGlslVarType} ${infer TIdenitifier};${infer TTail}`
-  ? { [name in TIdenitifier]: TVarType } & GlslVarsInfo<TTail, TQualifier>
+> = RemoveComments<TSrc> extends `${string}${TQualifier}${infer TDeclaration};${infer TRest}`
+  ? ParseTokens<TDeclaration> extends [infer TVarType extends GlslVarType, infer TIdenitifier extends string]
+    ? { [name in TIdenitifier]: TVarType } & GlslVarsInfo<TRest, TQualifier>
+    : {}
   : {}

@@ -4,6 +4,8 @@ import { GlslVarsInfo } from './lib/glsl-types'
 import { createShaderProgram, ShaderProgram } from './shader-program'
 import { gl } from './spec/mock-webgl-context'
 
+// TODO: atomize these tests which specific shaders for each.
+
 describe('createShaderProgram()', () => {
   const vertSrc = /* glsl */ `
     precision mediump float;
@@ -12,7 +14,9 @@ describe('createShaderProgram()', () => {
     attribute vec3 aVert3;
     attribute vec4 aVert4;
     
-    uniform vec2 uVec2;
+    uniform
+      vec2
+        \t uVec2 ; // funky white space is fine.
     uniform vec3 uVec3;
     uniform vec4 uVec4;
     
@@ -22,6 +26,8 @@ describe('createShaderProgram()', () => {
 
     uniform float uFloat;
     uniform bool uBool;
+
+    // uniform float uFloatArr[3];
 
     varying vec2 vUV;
 
@@ -64,6 +70,7 @@ describe('createShaderProgram()', () => {
           | 'uMat2'
           | 'uMat3'
           | 'uMat4'
+          // | 'uFloatArr'
         >()
       })
 
