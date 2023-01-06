@@ -5,8 +5,8 @@ export type AttributeType = 'float' | `vec${2 | 3 | 4}`
 
 /** Type of the `attributes` property of the shader object. */
 export type ShaderAttributes<T extends GlslVarsInfo<string, 'attribute'>> = {
-  [K in keyof T & string]: T[K] extends AttributeType //
-    ? ShaderAttribute<T[K]>
+  [K in keyof T & string]: T[K] extends { type: AttributeType } //
+    ? ShaderAttribute<T[K]['type']>
     : never
 }
 

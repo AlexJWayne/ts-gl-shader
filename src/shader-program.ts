@@ -1,7 +1,7 @@
 import { createAttributes, ShaderAttributes } from './attribute'
 import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
-import { RemoveComments, Resolve } from './lib/utility-types'
+import { Expand, RemoveComments } from './lib/utility-types'
 import { createUniforms, ShaderUniforms } from './uniform'
 
 type ShaderProgramInternal<
@@ -14,7 +14,7 @@ type ShaderProgramInternal<
   uniforms: ShaderUniforms<GlslVarsInfo<TCombinedSrc, 'uniform'>>
 }
 
-export type ShaderProgram<VertSrc extends string, FragSrc extends string> = Resolve<
+export type ShaderProgram<VertSrc extends string, FragSrc extends string> = Expand<
   ShaderProgramInternal<VertSrc, FragSrc> & {
     use(fn?: (program: Omit<ShaderProgram<VertSrc, FragSrc>, 'use'>) => void): void
   }

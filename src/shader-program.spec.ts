@@ -27,8 +27,6 @@ describe('createShaderProgram()', () => {
     uniform float uFloat;
     uniform bool uBool;
 
-    // uniform float uFloatArr[3];
-
     varying vec2 vUV;
 
     void main() {
@@ -70,7 +68,6 @@ describe('createShaderProgram()', () => {
           | 'uMat2'
           | 'uMat3'
           | 'uMat4'
-          // | 'uFloatArr'
         >()
       })
 

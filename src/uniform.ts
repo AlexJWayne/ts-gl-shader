@@ -48,20 +48,24 @@ export type UniformSetterArrayArgs = {
 
 /** Type of the `uniforms` property of the shader object. */
 export type ShaderUniforms<T extends GlslVarsInfo<string, 'uniform'>> = {
-  [K in keyof T & string]: T[K] extends keyof UniformSetterArgs //
-    ? ShaderUniform<T[K]>
+  [K in keyof T & string]: T[K] extends { type: keyof UniformSetterArgs } //
+    ? ShaderUniform<T[K]['type']>
     : never
 }
 
 /** Type of one uniform. */
-export type ShaderUniform<TType extends keyof UniformSetterArgs> = {
+export type ShaderUniform<TType extends keyof UniformSetterArgs | keyof UniformSetterArrayArgs> = {
   type: TType
-  set(...values: UniformSetterArgs[TType]): void
-} & (TType extends keyof UniformSetterArrayArgs
+} & (TType extends keyof UniformSetterArgs
   ? {
-      setArray(values: TType extends keyof UniformSetterArrayArgs ? UniformSetterArrayArgs[TType] : never): void
+      set(...values: UniformSetterArgs[TType]): void
     }
-  : {})
+  : {}) &
+  (TType extends keyof UniformSetterArrayArgs
+    ? {
+        setArray(values: TType extends keyof UniformSetterArrayArgs ? UniformSetterArrayArgs[TType] : never): void
+      }
+    : {})
 
 export function createUniforms<
   ShaderSrc extends string,
@@ -158,6 +162,7 @@ function createUniformArraySetter<T extends keyof UniformSetterArgs>(
   if (location === null) return () => undefined
 
   switch (type) {
+    case 'float':
     case 'vec2':
       return (values: UniformSetterArrayArgs['vec2']) => {
         if (values.length !== 2) throwIncorrectLengthError('vec2', identifier, 2, values.length)

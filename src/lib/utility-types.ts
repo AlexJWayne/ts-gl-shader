@@ -1,15 +1,15 @@
 /** Copies the structure of T, but resolves all named types to the their verbose form. */
-export type Resolve<T> = //
+export type Expand<T> = //
   T extends Iterable<number> // Don't expand number arrays
     ? T
     : WebGLBuffer extends T // Don't expand `WebGLBuffer`
     ? T
     : // Do expand these.
     T extends (...args: infer TArgs) => infer TReturn // expand function types, recurisvely
-    ? (...args: Resolve<TArgs>) => Resolve<TReturn>
+    ? (...args: Expand<TArgs>) => Expand<TReturn>
     : T extends object // expand object types, recursively
     ? T extends infer TObject
-      ? { [K in keyof TObject]: Resolve<TObject[K]> }
+      ? { [K in keyof TObject]: Expand<TObject[K]> }
       : never
     : T
 
