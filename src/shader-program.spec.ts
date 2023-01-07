@@ -284,7 +284,6 @@ describe('createShaderProgram()', () => {
     const shaderProgram = createShaderProgram(gl, src, src)
 
     it('parses attributes', () => {
-      console.log(shaderProgram)
       expect(shaderProgram.attributes.aVec3.location).toBeDefined()
       expect(shaderProgram.attributes.aVec3.type).toBe('vec3')
       expect(shaderProgram.attributes.aVec3.set).toBeTypeOf('function')
