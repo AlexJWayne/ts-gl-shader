@@ -296,5 +296,41 @@ describe('createShaderProgram()', () => {
     })
   })
 
+  describe('with comments', () => {
+    const src = /* glsl */ `
+    
+      // attribute
+      //   vec3\t
+      //             aNope \t
+      //      ;
+
+      /* uniform\t
+      vec2\t uNope; */
+
+      attribute vec3 aVec3;
+      
+      // Soft sorrow reaching
+      // Painful hands stretching outward
+      // Midnight stars beckon
+      uniform vec2 uVec2;
+    `
+
+    const shaderProgram = createShaderProgram(gl, src, src)
+
+    it('parses attributes', () => {
+      expect(Object.keys(shaderProgram.attributes)).toEqual(['aVec3'])
+      expect(shaderProgram.attributes.aVec3.location).toBeDefined()
+      expect(shaderProgram.attributes.aVec3.type).toBe('vec3')
+      expect(shaderProgram.attributes.aVec3.set).toBeTypeOf('function')
+    })
+
+    it('parses uniforms', () => {
+      expect(Object.keys(shaderProgram.uniforms)).toEqual(['uVec2'])
+      expect(shaderProgram.uniforms.uVec2.location).toBeDefined()
+      expect(shaderProgram.uniforms.uVec2.type).toBe('vec2')
+      expect(shaderProgram.uniforms.uVec2.set).toBeTypeOf('function')
+    })
+  })
+
   // TODO: test types
 })
