@@ -56,6 +56,7 @@ export type ShaderUniforms<T extends GlslVarsInfo<string, 'uniform'>> = {
 /** Type of one uniform. */
 export type ShaderUniform<TType extends keyof UniformSetterArgs | keyof UniformSetterArrayArgs> = {
   type: TType
+  location: WebGLUniformLocation
 } & (TType extends keyof UniformSetterArgs
   ? {
       set(...values: UniformSetterArgs[TType]): void
@@ -95,6 +96,7 @@ export function createUniform<GlslType extends keyof UniformSetterArgs>(
 
   return {
     type,
+    location,
     set: createUniformSetter(gl, location, type, name),
     setArray: createUniformArraySetter(gl, location, type, name),
   }

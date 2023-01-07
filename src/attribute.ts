@@ -13,6 +13,7 @@ export type ShaderAttributes<T extends GlslVarsInfo<string, 'attribute'>> = {
 /** Type of one attribute. */
 export type ShaderAttribute<Type extends AttributeType> = {
   type: Type
+  location: number
   set(buffer: WebGLBuffer): void
 }
 
@@ -34,6 +35,7 @@ export function createAttributes<
 
     attributes[name] = {
       type,
+      location,
       set: createAttributeSetter(gl, location, attributeSize),
     }
 
