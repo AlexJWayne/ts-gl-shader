@@ -21,11 +21,11 @@ export function createAttributes<
   ShaderSrc extends string,
   Return = ShaderAttributes<GlslVarsInfo<ShaderSrc, 'attribute'>>,
 >(gl: WebGL2RenderingContext, program: WebGLProgram, shaderSrc: ShaderSrc): Return {
-  const attributeDeclarations = shaderSrc.match(/(?:attribute) \w+ \w+;/g)
+  const attributeDeclarations = shaderSrc.match(/(?:attribute)\s+\w+\s+\w+\s*;/gm)
   if (!attributeDeclarations) return {} as Return
 
   return attributeDeclarations.reduce((attributes, attributeDeclaration) => {
-    const tokens = attributeDeclaration.split(' ') as ['attribute', AttributeType, string]
+    const tokens = attributeDeclaration.split(/\s+/gm) as ['attribute', AttributeType, string]
     const type = tokens[1]
     const name = tokens[2].replace(/;$/, '') as keyof Return & string
     const attributeSize = Number(type.match(/([234])$/)?.[1]) || 1

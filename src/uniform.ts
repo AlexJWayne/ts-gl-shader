@@ -72,11 +72,15 @@ export function createUniforms<
   ShaderSrc extends string,
   Return extends ShaderUniforms<GlslVarsInfo<ShaderSrc, 'uniform'>>,
 >(gl: WebGL2RenderingContext, program: WebGLProgram, shaderSrc: ShaderSrc): Return {
-  const uniformDeclarations = shaderSrc.match(/(?:uniform) \w+ \w+;/g)
+  const uniformDeclarations = shaderSrc.match(/(?:uniform)\s+\w+\s+\w+\s*;/gm)
   if (!uniformDeclarations) return {} as Return
 
   return uniformDeclarations.reduce((uniforms, uniformDeclaration) => {
-    const tokens = uniformDeclaration.split(' ') as ['uniform', keyof UniformSetterArgs, string]
+    const tokens = uniformDeclaration.split(/\s+/gm).map((s) => s.trim()) as [
+      'uniform',
+      keyof UniformSetterArgs,
+      string,
+    ]
     const type = tokens[1]
     const name = tokens[2].replace(/;$/, '')
 
@@ -164,7 +168,6 @@ function createUniformArraySetter<T extends keyof UniformSetterArgs>(
   if (location === null) return () => undefined
 
   switch (type) {
-    case 'float':
     case 'vec2':
       return (values: UniformSetterArrayArgs['vec2']) => {
         if (values.length !== 2) throwIncorrectLengthError('vec2', identifier, 2, values.length)
@@ -189,6 +192,6 @@ function createUniformArraySetter<T extends keyof UniformSetterArgs>(
 
 function throwIncorrectLengthError(glslType: string, identifier: string, expectedLength: number, actualLength: number) {
   throw new Error(
-    `Expected an array of length ${expectedLength} for "${glslType} uniform ${identifier}". Got ${actualLength}.`,
+    `Expected an array of length ${expectedLength} for "uniform ${glslType} ${identifier};". Got ${actualLength}.`,
   )
 }
