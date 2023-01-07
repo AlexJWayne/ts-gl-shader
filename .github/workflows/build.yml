@@ -1,4 +1,4 @@
-name: Check Workspace
+name: Build
 
 on:
   push:
