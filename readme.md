@@ -1,3 +1,5 @@
+[![Build](https://github.com/AlexJWayne/ts-gl-shader/actions/workflows/build.yml/badge.svg)](https://github.com/AlexJWayne/ts-gl-shader/actions/workflows/build.yml)
+
 # ts-gl-shader
 
 > _Strongly typed no boilerplate WebGL shaders._
