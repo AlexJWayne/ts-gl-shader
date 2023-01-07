@@ -1,6 +1,7 @@
 import { createAttributes, ShaderAttributes } from './attribute'
 import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
+import { removeComments } from './lib/string-processing'
 import { Expand, RemoveComments } from './lib/utility-types'
 import { createUniforms, ShaderUniforms } from './uniform'
 
@@ -63,10 +64,7 @@ function combineShaderSource<
   FragSrc extends string,
   Return = RemoveComments<`${VertSrc}\n${FragSrc}`>,
 >(vertSrc: VertSrc, fragSrc: FragSrc): Return {
-  return [vertSrc, fragSrc]
-    .join('\n')
-    .replace(/\/\*.*\*\//gms, '')
-    .replace(/\/\/.*$/gm, '') as Return
+  return removeComments([vertSrc, fragSrc].join('\n')) as Return
 }
 
 /** Create a program from a vertex shader and a fragment shader source. */

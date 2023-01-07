@@ -3,8 +3,22 @@ import { describe, expect, it, vi } from 'vitest'
 import { createShaderProgram, ShaderProgram } from './shader-program'
 import { gl } from './spec/mock-webgl-context'
 
-// TODO: atomize these tests which specific shaders for each.
+//** Reteurns the arguments of a uniform setter as something suitable for use in a test name. */
+function describeArgs(args: unknown[]) {
+  return args
+    .map((arg: any) => {
+      if (Array.isArray(arg)) return `[${arg.map((n) => typeof n).join(',')}]`
+      if (typeof arg === 'object') {
+        if ('length' in arg) return `${arg.constructor.name}[${arg.length}]`
+        return arg.constructor.name
+      }
+      if (typeof arg === 'boolean') return arg
+      return typeof arg
+    })
+    .join(', ')
+}
 
+/** Test a shader attribute property against the expectation in `expected`. */
 function testAttribute<
   TSrc extends string,
   TShaderProgram extends ShaderProgram<string, string> = ShaderProgram<TSrc, TSrc>,
@@ -37,7 +51,7 @@ function testAttribute<
       expect(getAttribute(shaderProgram).type).toEqual(expected.varType)
     })
 
-    it(`has a set() method which uses an attribute size of ${expected.attributeSize}`, () => {
+    it(`has a set(WebGLBuffer) method which uses an attribute size of ${expected.attributeSize}`, () => {
       vi.spyOn(gl, 'getAttribLocation').mockReturnValue(123)
       vi.spyOn(gl, 'bindBuffer')
       vi.spyOn(gl, 'enableVertexAttribArray')
@@ -56,6 +70,7 @@ function testAttribute<
   })
 }
 
+/** Test a shader uniform property against the expectation in `expected`. */
 function testUniform<
   TSrc extends string,
   TShaderProgram extends ShaderProgram<string, string> = ShaderProgram<TSrc, TSrc>,
@@ -67,10 +82,19 @@ function testUniform<
     varType: string
 
     /** The gl function that is called to set the uniform by individual values. */
-    set?: [glSetterName: Extract<keyof typeof gl, `uniform${string}`>, values: any, expectedValues?: any]
+    set?: {
+      glSetter: Extract<keyof typeof gl, `uniform${string}`>
+      args: any[]
+      expectedValues?: any[]
+    }[]
 
     /** The gl function that is called to set the uniform by an array of values. */
-    setArray?: [glSetterName: Extract<keyof typeof gl, `uniform${string}`>, values: any, expectedValues?: any]
+    setArray?: {
+      glSetter: Extract<keyof typeof gl, `uniform${string}`>
+      args: any[]
+      expectedValues?: any[]
+      throws?: string
+    }[]
   },
   additionalTests?: (shaderProgram: TShaderProgram) => void,
 ) {
@@ -92,27 +116,35 @@ function testUniform<
     })
 
     if (expected.set) {
-      const [glSetterName, values, expectedValues] = expected.set
-
-      it(`has a set() method which calls gl.${glSetterName}()`, () => {
-        const shaderProgram = createShaderProgram(gl, src, src)
-        vi.spyOn(gl, glSetterName)
-        const uniform = getUniform(shaderProgram)
-        uniform.set(...values)
-        expect(gl[glSetterName]).toHaveBeenCalledWith(uniform.location, ...(expectedValues ?? values))
-      })
+      for (const { glSetter, args, expectedValues } of expected.set) {
+        it(`has a \`set(${describeArgs(args)})\` method which calls gl.${glSetter}()`, () => {
+          const shaderProgram = createShaderProgram(gl, src, src)
+          vi.spyOn(gl, glSetter)
+          const uniform = getUniform(shaderProgram)
+          uniform.set(...args)
+          expect(gl[glSetter]).toHaveBeenCalledWith(uniform.location, ...(expectedValues ?? args))
+        })
+      }
     }
 
     if (expected.setArray) {
-      const [glSetterName, values, expectedValues] = expected.setArray
-
-      it(`has a setArray() method which calls gl.${glSetterName}()`, () => {
-        const shaderProgram = createShaderProgram(gl, src, src)
-        vi.spyOn(gl, glSetterName)
-        const uniform = getUniform(shaderProgram)
-        uniform.setArray(...values)
-        expect(gl[glSetterName]).toHaveBeenCalledWith(uniform.location, ...(expectedValues ?? values))
-      })
+      for (const { glSetter, args, expectedValues, throws } of expected.setArray) {
+        if (throws) {
+          it(`has a \`setArray()\` method which throws when passed ${describeArgs(args)}`, () => {
+            const shaderProgram = createShaderProgram(gl, src, src)
+            const uniform = getUniform(shaderProgram)
+            expect(() => uniform.setArray(...args)).toThrow(throws)
+          })
+        } else {
+          it(`has a \`setArray()\` method which calls gl.${glSetter}()`, () => {
+            const shaderProgram = createShaderProgram(gl, src, src)
+            vi.spyOn(gl, glSetter)
+            const uniform = getUniform(shaderProgram)
+            uniform.setArray(...args)
+            expect(gl[glSetter]).toHaveBeenCalledWith(uniform.location, ...(expectedValues ?? args))
+          })
+        }
+      }
     }
 
     additionalTests?.(createShaderProgram(gl, src, src) as any)
@@ -143,129 +175,152 @@ describe('createShaderProgram()', () => {
     describe('single values', () => {
       testUniform('uniform float uFloat;', 'uFloat', {
         varType: 'float',
-        set: ['uniform1f', [1]],
+        set: [{ glSetter: 'uniform1f', args: [1] }],
       })
       testUniform('uniform int uInt;', 'uInt', {
         varType: 'int',
-        set: ['uniform1i', [1]],
+        set: [{ glSetter: 'uniform1i', args: [1] }],
       })
       testUniform('uniform uint uUint;', 'uUint', {
         varType: 'uint',
-        set: ['uniform1ui', [1]],
+        set: [{ glSetter: 'uniform1ui', args: [1] }],
       })
       testUniform('uniform bool uBool;', 'uBool', {
         varType: 'bool',
-        set: ['uniform1ui', [true], [1]],
+        set: [
+          { glSetter: 'uniform1ui', args: [false], expectedValues: [0] },
+          { glSetter: 'uniform1ui', args: [true], expectedValues: [1] },
+        ],
       })
     })
 
     describe('vectors', () => {
-      testUniform(
-        'uniform vec2 uVec2;',
-        'uVec2',
-        {
-          varType: 'vec2',
-          set: ['uniform2f', [1, 2]],
-          setArray: ['uniform2fv', [[1, 2]]],
-        },
-        (shaderProgram) => {
-          it('throws if setArray() is called with an array of a length that is not 2', () => {
-            expect(() => shaderProgram.uniforms.uVec2.setArray(new Float32Array(3).fill(0))).toThrowError(
-              'Expected an array of length 2 for "uniform vec2 uVec2;". Got 3.',
-            )
-          })
-        },
-      )
+      testUniform('uniform vec2 uVec2;', 'uVec2', {
+        varType: 'vec2',
+        set: [{ glSetter: 'uniform2f', args: [1, 2] }],
+        setArray: [
+          {
+            glSetter: 'uniform2fv',
+            args: [[1, 2]],
+          },
+          {
+            glSetter: 'uniform2fv',
+            args: [new Float32Array([1, 2, 3])],
+            throws: 'Expected an array of length 2 for "uniform vec2 uVec2;". Got 3.',
+          },
+        ],
+      })
 
-      testUniform(
-        'uniform vec3 uVec3;',
-        'uVec3',
-        {
-          varType: 'vec3',
-          set: ['uniform3f', [1, 2, 3]],
-          setArray: ['uniform3fv', [[1, 2, 3]]],
-        },
-        (shaderProgram) => {
-          it('throws if setArray() is called with an array of a length that is not 3', () => {
-            expect(() => shaderProgram.uniforms.uVec3.setArray(new Float32Array(6).fill(0))).toThrowError(
-              'Expected an array of length 3 for "uniform vec3 uVec3;". Got 6.',
-            )
-          })
-        },
-      )
-      testUniform(
-        'uniform vec4 uVec4;',
-        'uVec4',
-        {
-          varType: 'vec4',
-          set: ['uniform4f', [1, 2, 3, 4]],
-          setArray: ['uniform4fv', [[1, 2, 3, 4]]],
-        },
-        (shaderProgram) => {
-          it('throws if setArray() is called with an array of a length that is not 4', () => {
-            expect(() => shaderProgram.uniforms.uVec4.setArray(new Float32Array(3).fill(0))).toThrowError(
-              'Expected an array of length 4 for "uniform vec4 uVec4;". Got 3.',
-            )
-          })
-        },
-      )
+      testUniform('uniform vec3 uVec3;', 'uVec3', {
+        varType: 'vec3',
+        set: [{ glSetter: 'uniform3f', args: [1, 2, 3] }],
+        setArray: [
+          {
+            glSetter: 'uniform3fv',
+            args: [[1, 2, 3]],
+          },
+          {
+            glSetter: 'uniform3fv',
+            args: [new Float32Array([1, 2, 3, 4])],
+            throws: 'Expected an array of length 3 for "uniform vec3 uVec3;". Got 4.',
+          },
+        ],
+      })
+      testUniform('uniform vec4 uVec4;', 'uVec4', {
+        varType: 'vec4',
+        set: [{ glSetter: 'uniform4f', args: [1, 2, 3, 4] }],
+        setArray: [
+          {
+            glSetter: 'uniform4fv',
+            args: [[1, 2, 3, 4]],
+          },
+          {
+            glSetter: 'uniform4fv',
+            args: [new Float32Array([1, 2, 3, 4, 5])],
+            throws: 'Expected an array of length 4 for "uniform vec4 uVec4;". Got 5.',
+          },
+        ],
+      })
     })
 
     describe('matrices', () => {
-      testUniform(
-        'uniform mat2 uMat2;',
-        'uMat2',
-        {
-          varType: 'mat2',
-          set: ['uniformMatrix2fv', [[1, 2, 3, 4]], [false, [1, 2, 3, 4]]],
-        },
-        (shaderProgram) => {
-          it('throws if set() is called with an array of a length that is not 4', () => {
-            const uniform = shaderProgram.uniforms.uMat2
-            expect(() => uniform.set(new Float32Array(3).fill(0))).toThrowError(
-              'Expected an array of length 4 for "uniform mat2 uMat2;". Got 3.',
-            )
-          })
-        },
-      )
+      testUniform('uniform mat2 uMat2;', 'uMat2', {
+        varType: 'mat2',
+        setArray: [
+          {
+            glSetter: 'uniformMatrix2fv',
+            args: [[1, 2, 3, 4]],
+            expectedValues: [false, [1, 2, 3, 4]],
+          },
+          {
+            glSetter: 'uniformMatrix2fv',
+            args: [new Float32Array(4).fill(0)],
+            expectedValues: [false, new Float32Array(4).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix2fv',
+            args: [new Float64Array(4).fill(0)],
+            expectedValues: [false, new Float64Array(4).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix2fv',
+            args: [new Float32Array(3).fill(0)],
+            throws: 'Expected an array of length 4 for "uniform mat2 uMat2;". Got 3.',
+          },
+        ],
+      })
 
-      testUniform(
-        'uniform mat3 uMat3;',
-        'uMat3',
-        {
-          varType: 'mat3',
-          set: ['uniformMatrix3fv', [[1, 2, 3, 4, 5, 6, 7, 8, 9]], [false, [1, 2, 3, 4, 5, 6, 7, 8, 9]]],
-        },
-        (shaderProgram) => {
-          it('throws if set() is called with an array of a length that is not 9', () => {
-            const uniform = shaderProgram.uniforms.uMat3
-            expect(() => uniform.set(new Float32Array(10).fill(0))).toThrowError(
-              'Expected an array of length 9 for "uniform mat3 uMat3;". Got 10',
-            )
-          })
-        },
-      )
+      testUniform('uniform mat3 uMat3;', 'uMat3', {
+        varType: 'mat3',
+        setArray: [
+          {
+            glSetter: 'uniformMatrix3fv',
+            args: [[1, 2, 3, 4, 5, 6, 7, 8, 9]],
+            expectedValues: [false, [1, 2, 3, 4, 5, 6, 7, 8, 9]],
+          },
+          {
+            glSetter: 'uniformMatrix3fv',
+            args: [new Float32Array(9).fill(0)],
+            expectedValues: [false, new Float32Array(9).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix3fv',
+            args: [new Float64Array(9).fill(0)],
+            expectedValues: [false, new Float64Array(9).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix3fv',
+            args: [new Float32Array(10).fill(0)],
+            throws: 'Expected an array of length 9 for "uniform mat3 uMat3;". Got 10.',
+          },
+        ],
+      })
 
-      testUniform(
-        'uniform mat4 uMat4;',
-        'uMat4',
-        {
-          varType: 'mat4',
-          set: [
-            'uniformMatrix4fv',
-            [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
-            [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
-          ],
-        },
-        (shaderProgram) => {
-          it('throws if set() is called with an array of a length that is not 16', () => {
-            const uniform = shaderProgram.uniforms.uMat4
-            expect(() => uniform.set(new Float32Array(32).fill(0))).toThrowError(
-              'Expected an array of length 16 for "uniform mat4 uMat4;". Got 32',
-            )
-          })
-        },
-      )
+      testUniform('uniform mat4 uMat4;', 'uMat4', {
+        varType: 'mat4',
+        setArray: [
+          {
+            glSetter: 'uniformMatrix4fv',
+            args: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+            expectedValues: [false, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]],
+          },
+          {
+            glSetter: 'uniformMatrix4fv',
+            args: [new Float32Array(16).fill(0)],
+            expectedValues: [false, new Float32Array(16).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix4fv',
+            args: [new Float64Array(16).fill(0)],
+            expectedValues: [false, new Float64Array(16).fill(0)],
+          },
+          {
+            glSetter: 'uniformMatrix4fv',
+            args: [new Float32Array(17).fill(0)],
+            throws: 'Expected an array of length 16 for "uniform mat4 uMat4;". Got 17.',
+          },
+        ],
+      })
     })
   })
 
@@ -305,7 +360,10 @@ describe('createShaderProgram()', () => {
       //      ;
 
       /* uniform\t
-      vec2\t uNope; */
+      vec2\t uNope1; */
+
+      uniform float uFloat;
+      /* uniform uint uNope2; */
 
       attribute vec3 aVec3;
       
@@ -325,7 +383,15 @@ describe('createShaderProgram()', () => {
     })
 
     it('parses uniforms', () => {
-      expect(Object.keys(shaderProgram.uniforms)).toEqual(['uVec2'])
+      const uniformIdentifiers = Object.keys(shaderProgram.uniforms)
+      expect(uniformIdentifiers).toHaveLength(2)
+      expect(uniformIdentifiers).toContain('uVec2')
+      expect(uniformIdentifiers).toContain('uFloat')
+
+      expect(shaderProgram.uniforms.uFloat.location).toBeDefined()
+      expect(shaderProgram.uniforms.uFloat.type).toBe('float')
+      expect(shaderProgram.uniforms.uFloat.set).toBeTypeOf('function')
+
       expect(shaderProgram.uniforms.uVec2.location).toBeDefined()
       expect(shaderProgram.uniforms.uVec2.type).toBe('vec2')
       expect(shaderProgram.uniforms.uVec2.set).toBeTypeOf('function')
