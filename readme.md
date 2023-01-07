@@ -199,7 +199,7 @@ deeply.nested.object.shader.use((shader) => {
 })
 ```
 
-## `shaderProgram.attributes`
+## `shaderProgram.attributes[attributeName].set`
 
 ```typescript
 shaderProgram
@@ -211,11 +211,17 @@ Sets a shader attribute to a `WebGLBuffer`. The `size` argument to WebGL that se
 
 ```typescript
 // example
+
+// shader has:
+//
+//     attribute vec3 aVert;
+//
+
 shader.use()
-shader.attributes.aVert.set(billboardBuffer)
+shader.attributes.aVert.set(myGeometryBuffer)
 ```
 
-## `shaderProgram.uniforms`
+## `shaderProgram.uniforms[uniformName].set`
 
 ```typescript
 shaderProgram
@@ -227,6 +233,40 @@ Sets a shader uniform to a specific set of numeric values. The type of this sett
 
 ```typescript
 // example
+
+// shader has:
+//
+//     uniform vec4 uColor;
+//
+
 shader.use()
-shader.uniforms.uColor.set(1, 0, 1, 1) // magenta
+shader.uniforms.uColor.set(1, 0, 1, 1)
+```
+
+## `shaderProgram.uniforms[uniformName].setArray`
+
+```typescript
+shaderProgram
+  .uniforms[uniformNameHere]
+    .setArray(values: UniformSetterArrayArg): void
+```
+
+Sets a shader uniform to a specific binary typed array or tuple of `number`s. The type of this setter function is derived from the type of the uniform in the shader. For instance, a `vec3` would accept `[number, number, number] | Float32Array` but a `mat2` would accept `[number, number, number, number] | Float32Array`.
+
+If a typed array is passed to `setArray()` this is not the correct length, a runtime error will be thrown.
+
+```typescript
+// example
+
+// shader has:
+//
+//     uniform vec4 uColor;
+//
+
+shader.use()
+shader.uniforms.uColor.setArray([1, 0, 1, 1])
+shader.uniforms.uColor.setArray(new Float32Array([1, 0, 1, 1]))
+
+// This will throw a runtime error.
+shader.uniforms.uColor.setArray(new Float32Array([1]))
 ```
