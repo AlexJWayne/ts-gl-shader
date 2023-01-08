@@ -1,5 +1,6 @@
-import { GlslVarsInfo } from './lib/glsl-types'
+import { GlslVarsInfo, GlslVarType } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
+import { parseDeclarations } from './lib/string-processing'
 
 // 2x2 matrix = 4 elements
 export type Mat2v = [number, number, number, number]
@@ -69,31 +70,24 @@ export type ShaderUniform<TType extends keyof UniformSetterArgs | keyof UniformS
       }
     : {})
 
-export function createUniforms<
-  ShaderSrc extends string,
-  Return extends ShaderUniforms<GlslVarsInfo<ShaderSrc, 'uniform'>>,
->(gl: WebGL2RenderingContext, program: WebGLProgram, shaderSrc: ShaderSrc): Return {
-  const uniformDeclarations = shaderSrc.match(/(?:uniform)\s+\w+\s+\w+\s*;/gm)
-  if (!uniformDeclarations) return {} as Return
+export function createUniforms<ShaderSrc extends string>(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  shaderSrc: ShaderSrc,
+): ShaderUniforms<GlslVarsInfo<ShaderSrc, 'uniform'>> {
+  const uniformDeclarations = parseDeclarations('uniform', shaderSrc)
 
-  return uniformDeclarations.reduce((uniforms, uniformDeclaration) => {
-    const tokens = uniformDeclaration.split(/\s+/gm).map((s) => s.trim()) as [
-      'uniform',
-      keyof UniformSetterArgs,
-      string,
-    ]
-    const type = tokens[1]
-    const identifier = tokens[2].replace(/;$/, '')
-
-    uniforms[identifier] = createUniform(gl, program, type, identifier) as any
+  return uniformDeclarations.reduce((uniforms, declaration) => {
+    const { type, identifier } = declaration
+    uniforms[identifier] = createUniform(gl, program, type, identifier)
     return uniforms
   }, {} as any)
 }
 
-export function createUniform<GlslType extends keyof UniformSetterArgs>(
+export function createUniform<TVarType extends GlslVarType>(
   gl: WebGL2RenderingContext,
   program: WebGLProgram,
-  type: GlslType,
+  type: TVarType,
   identifier: string,
 ) {
   const location = gl.getUniformLocation(program, identifier)
@@ -107,7 +101,7 @@ export function createUniform<GlslType extends keyof UniformSetterArgs>(
   }
 }
 
-function createUniformSetter<T extends keyof UniformSetterArgs>(
+function createUniformSetter<T extends GlslVarType>(
   gl: WebGL2RenderingContext,
   location: WebGLUniformLocation | null,
   type: T,
@@ -140,10 +134,10 @@ function createUniformSetter<T extends keyof UniformSetterArgs>(
   return null
 }
 
-function createUniformArraySetter<T extends keyof UniformSetterArgs>(
+function createUniformArraySetter<TVarType extends GlslVarType>(
   gl: WebGL2RenderingContext,
   location: WebGLUniformLocation | null,
-  type: T,
+  type: TVarType,
   identifier: string,
 ) {
   if (location === null) return () => undefined

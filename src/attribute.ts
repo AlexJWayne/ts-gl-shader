@@ -1,5 +1,6 @@
 import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
+import { parseDeclarations } from './lib/string-processing'
 
 export type AttributeType = 'float' | `vec${2 | 3 | 4}`
 
@@ -17,28 +18,25 @@ export type ShaderAttribute<Type extends AttributeType> = {
   set(buffer: WebGLBuffer): void
 }
 
-export function createAttributes<
-  ShaderSrc extends string,
-  Return = ShaderAttributes<GlslVarsInfo<ShaderSrc, 'attribute'>>,
->(gl: WebGL2RenderingContext, program: WebGLProgram, shaderSrc: ShaderSrc): Return {
-  const attributeDeclarations = shaderSrc.match(/(?:attribute)\s+\w+\s+\w+\s*;/gm)
-  if (!attributeDeclarations) return {} as Return
+export function createAttributes<ShaderSrc extends string>(
+  gl: WebGL2RenderingContext,
+  program: WebGLProgram,
+  shaderSrc: ShaderSrc,
+): ShaderAttributes<GlslVarsInfo<ShaderSrc, 'attribute'>> {
+  const attributeDeclarations = parseDeclarations('attribute', shaderSrc)
 
-  return attributeDeclarations.reduce((attributes, attributeDeclaration) => {
-    const tokens = attributeDeclaration.split(/\s+/gm) as ['attribute', AttributeType, string]
-    const type = tokens[1]
-    const name = tokens[2].replace(/;$/, '') as keyof Return & string
+  return attributeDeclarations.reduce((attributes, declaration) => {
+    const { type, identifier } = declaration
     const attributeSize = Number(type.match(/([234])$/)?.[1]) || 1
 
-    const location = gl.getAttribLocation(program, name)
-    handleGlError(gl, `ShaderProgramObject gl.getAttribLocation() ${name}`)
+    const location = gl.getAttribLocation(program, identifier)
+    handleGlError(gl, `ShaderProgramObject gl.getAttribLocation() ${identifier}`)
 
-    attributes[name] = {
+    attributes[identifier] = {
       type,
       location,
       set: createAttributeSetter(gl, location, attributeSize),
     }
-
     return attributes
   }, {} as any)
 }
