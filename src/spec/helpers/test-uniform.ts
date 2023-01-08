@@ -32,7 +32,6 @@ export function testUniform<
       expectedValues?: any[]
     } & ({ testModeValues: any } | { throws: string }))[]
   },
-  additionalTests?: (shaderProgram: TShaderProgram) => void,
 ) {
   function getUniform(shaderProgram: ShaderProgram<string, string>): any {
     return shaderProgram.uniforms[identifier]
@@ -136,8 +135,6 @@ export function testUniform<
         }
       })
     }
-
-    additionalTests?.(createShaderProgram(gl, src, src) as any)
   })
 
   return {

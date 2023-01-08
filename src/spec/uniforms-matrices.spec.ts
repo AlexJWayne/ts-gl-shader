@@ -18,13 +18,13 @@ describe('createShaderProgram()', () => {
             glSetter: 'uniformMatrix2fv',
             args: [new Float32Array(4).fill(0)],
             expectedValues: [false, new Float32Array(4).fill(0)],
-            testModeValues: new Float32Array(4).fill(0),
+            testModeValues: new Array(4).fill(0),
           },
           {
             glSetter: 'uniformMatrix2fv',
             args: [new Float64Array(4).fill(0)],
             expectedValues: [false, new Float64Array(4).fill(0)],
-            testModeValues: new Float64Array(4).fill(0),
+            testModeValues: new Array(4).fill(0),
           },
           {
             glSetter: 'uniformMatrix2fv',
@@ -52,13 +52,13 @@ describe('createShaderProgram()', () => {
             glSetter: 'uniformMatrix3fv',
             args: [new Float32Array(9).fill(0)],
             expectedValues: [false, new Float32Array(9).fill(0)],
-            testModeValues: new Float32Array(9).fill(0),
+            testModeValues: new Array(9).fill(0),
           },
           {
             glSetter: 'uniformMatrix3fv',
             args: [new Float64Array(9).fill(0)],
             expectedValues: [false, new Float64Array(9).fill(0)],
-            testModeValues: new Float64Array(9).fill(0),
+            testModeValues: new Array(9).fill(0),
           },
           {
             glSetter: 'uniformMatrix3fv',
@@ -88,13 +88,13 @@ describe('createShaderProgram()', () => {
             glSetter: 'uniformMatrix4fv',
             args: [new Float32Array(16).fill(0)],
             expectedValues: [false, new Float32Array(16).fill(0)],
-            testModeValues: new Float32Array(16).fill(0),
+            testModeValues: new Array(16).fill(0),
           },
           {
             glSetter: 'uniformMatrix4fv',
             args: [new Float64Array(16).fill(0)],
             expectedValues: [false, new Float64Array(16).fill(0)],
-            testModeValues: new Float64Array(16).fill(0),
+            testModeValues: new Array(16).fill(0),
           },
           {
             glSetter: 'uniformMatrix4fv',

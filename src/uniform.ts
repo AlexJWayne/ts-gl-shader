@@ -120,9 +120,13 @@ export function createUniform<TVarType extends GlslVarType>(
   identifier: string,
 ) {
   const location = gl.getUniformLocation(program, identifier)
-  handleGlError(gl, `ShaderProgramObject gl.getUniformLocation() ${identifier}`)
+  handleGlError(gl, `createShaderProgram gl.getUniformLocation() ${identifier}`)
 
-  const didSet = testMode.current ? (value: any): void => (uniform.value = value) : undefined
+  const didSet = testMode.current
+    ? (value: any): void => {
+        uniform.value = typeof value[Symbol.iterator] === 'function' ? [...value] : value
+      }
+    : undefined
 
   const uniform = {
     type,

@@ -23,7 +23,7 @@ describe('createShaderProgram()', () => {
           {
             glSetter: 'uniform2fv',
             args: [new Float32Array([1, 2])],
-            testModeValues: new Float32Array([1, 2]),
+            testModeValues: [1, 2],
           },
           {
             glSetter: 'uniform2fv',
@@ -56,6 +56,11 @@ describe('createShaderProgram()', () => {
           },
           {
             glSetter: 'uniform3fv',
+            args: [new Float32Array([1, 2, 3])],
+            testModeValues: [1, 2, 3],
+          },
+          {
+            glSetter: 'uniform3fv',
             args: [new Float32Array([1, 2, 3, 4])],
             throws: 'Expected an array of length 3 for "uniform vec3 uVec3;". Got 4.',
           },
@@ -81,6 +86,11 @@ describe('createShaderProgram()', () => {
           {
             glSetter: 'uniform4fv',
             args: [[1, 2, 3, 4]],
+            testModeValues: [1, 2, 3, 4],
+          },
+          {
+            glSetter: 'uniform4fv',
+            args: [new Float32Array([1, 2, 3, 4])],
             testModeValues: [1, 2, 3, 4],
           },
           {
