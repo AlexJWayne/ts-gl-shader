@@ -8,16 +8,16 @@
 
 This library will parse your GLSL shaders at the type level and provide an easy to use object for WebGL rendering.
 
-## Work in Progress
+## Currently Unsupported
 
-This library is current a work in progress. Still to come for 1.0:
+PR's welcome.
 
-- [x] Setting matrix uniforms.
-- [x] Setting uniforms from typed arrays.
-- [ ] Ability to inspect set values for tests.
-- [x] A 3D example.
+- [ ] Inspect set values in tests without having to spy on `gl.uniform3f()` and it's friends.
 - [ ] Texture samplers.
-- [ ] Set vector arrays like `uniform vec3 uPoints[10]`.
+- [ ] Set GLSL arrays like `uniform vec3 uPoints[10]`.
+- [ ] Set GLSL structs.
+- [ ] UBOs (Uniform Buffer Objects).
+- [ ] ABOs (Attribute Buffer Objects).
 
 ## Table of Contents
 
