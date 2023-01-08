@@ -8,15 +8,15 @@ describe('createShaderProgram()', () => {
   describe('parsing', () => {
     describe('with complex whitespace', () => {
       const src = /* glsl */ `
-    
-      attribute
-        vec3\t
-                  aVec3 \t
-            ;
+      
+        attribute
+          vec3\t
+                    aVec3 \t
+              ;
 
-      uniform\t
-      vec2\t uVec2;
-    `
+        uniform\t
+        vec2\t uVec2;
+      `
 
       const shaderProgram = createShaderProgram(gl, src, src)
 
