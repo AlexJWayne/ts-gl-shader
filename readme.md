@@ -16,8 +16,8 @@ PR's welcome.
 - [ ] Texture samplers.
 - [ ] Set GLSL arrays like `uniform vec3 uPoints[10]`.
 - [ ] Set GLSL structs.
-- [ ] UBOs (Uniform Buffer Objects).
-- [ ] ABOs (Attribute Buffer Objects).
+- [ ] VAOs
+- [ ] UBOs
 
 ## Table of Contents
 
