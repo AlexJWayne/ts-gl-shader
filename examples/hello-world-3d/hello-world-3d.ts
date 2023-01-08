@@ -82,8 +82,8 @@ function start() {
     // Use the shader program and set its data.
     shader.use()
     shader.attributes.aVert.set(cubeVerts)
-    shader.uniforms.uProjection.set(projection)
-    shader.uniforms.uMatrix.set(cubeMatrix)
+    shader.uniforms.uProjection.setArray(projection)
+    shader.uniforms.uMatrix.setArray(cubeMatrix)
     shader.uniforms.uMainColor.set(0, 0, 1, 1)
     shader.uniforms.uLineColor.set(1, 0, 1, 1)
     shader.uniforms.uLineWidth.set(0.05)

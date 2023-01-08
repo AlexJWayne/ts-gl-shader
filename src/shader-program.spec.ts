@@ -21,10 +21,11 @@ function describeArgs(args: unknown[]) {
 /** Test a shader attribute property against the expectation in `expected`. */
 function testAttribute<
   TSrc extends string,
+  TIdentifier extends keyof TShaderProgram['attributes'] & string,
   TShaderProgram extends ShaderProgram<string, string> = ShaderProgram<TSrc, TSrc>,
 >(
   src: TSrc,
-  identifier: keyof TShaderProgram['attributes'] & string,
+  identifier: TIdentifier,
   expected: {
     /** The expected glsl var type as written in the source code. */
     varType: string
@@ -68,15 +69,21 @@ function testAttribute<
       expect(gl.vertexAttribPointer).toHaveBeenCalledWith(123, expected.attributeSize, gl.FLOAT, false, 0, 0)
     })
   })
+
+  return {
+    /** Provide a generic type parameter here to expect the attribute object to extend this type. */
+    expectType<T extends TShaderProgram['attributes'][TIdentifier]>() {},
+  }
 }
 
 /** Test a shader uniform property against the expectation in `expected`. */
 function testUniform<
   TSrc extends string,
+  TIdentifier extends keyof TShaderProgram['uniforms'] & string,
   TShaderProgram extends ShaderProgram<string, string> = ShaderProgram<TSrc, TSrc>,
 >(
   src: TSrc,
-  identifier: keyof TShaderProgram['uniforms'] & string,
+  identifier: TIdentifier,
   expected: {
     /** The glsl var type as written in the source code. */
     varType: string
@@ -149,6 +156,11 @@ function testUniform<
 
     additionalTests?.(createShaderProgram(gl, src, src) as any)
   })
+
+  return {
+    /** Provide a generic type parameter here to expect the uniform object to extend this type. */
+    expectType<T extends TShaderProgram['uniforms'][TIdentifier]>() {},
+  }
 }
 
 describe('createShaderProgram()', () => {
@@ -156,19 +168,38 @@ describe('createShaderProgram()', () => {
     testAttribute('attribute float aFloat;', 'aFloat', {
       varType: 'float',
       attributeSize: 1,
-    })
+    }).expectType<{
+      type: 'float'
+      location: number
+      set: (buffer: WebGLBuffer) => void
+    }>()
+
     testAttribute('attribute vec2 aVec2;', 'aVec2', {
       varType: 'vec2',
       attributeSize: 2,
-    })
+    }).expectType<{
+      type: 'vec2'
+      location: number
+      set: (buffer: WebGLBuffer) => void
+    }>()
+
     testAttribute('attribute vec3 aVec3;', 'aVec3', {
       varType: 'vec3',
       attributeSize: 3,
-    })
+    }).expectType<{
+      type: 'vec3'
+      location: number
+      set: (buffer: WebGLBuffer) => void
+    }>()
+
     testAttribute('attribute vec4 aVec4;', 'aVec4', {
       varType: 'vec4',
       attributeSize: 4,
-    })
+    }).expectType<{
+      type: 'vec4'
+      location: number
+      set: (buffer: WebGLBuffer) => void
+    }>()
   })
 
   describe('uniforms', () => {
@@ -176,22 +207,41 @@ describe('createShaderProgram()', () => {
       testUniform('uniform float uFloat;', 'uFloat', {
         varType: 'float',
         set: [{ glSetter: 'uniform1f', args: [1] }],
-      })
+      }).expectType<{
+        type: 'float'
+        location: WebGLUniformLocation
+        set: (n: number) => void
+      }>()
+
       testUniform('uniform int uInt;', 'uInt', {
         varType: 'int',
         set: [{ glSetter: 'uniform1i', args: [1] }],
-      })
+      }).expectType<{
+        type: 'int'
+        location: WebGLUniformLocation
+        set: (n: number) => void
+      }>()
+
       testUniform('uniform uint uUint;', 'uUint', {
         varType: 'uint',
         set: [{ glSetter: 'uniform1ui', args: [1] }],
-      })
+      }).expectType<{
+        type: 'uint'
+        location: WebGLUniformLocation
+        set: (n: number) => void
+      }>()
+
       testUniform('uniform bool uBool;', 'uBool', {
         varType: 'bool',
         set: [
           { glSetter: 'uniform1ui', args: [false], expectedValues: [0] },
           { glSetter: 'uniform1ui', args: [true], expectedValues: [1] },
         ],
-      })
+      }).expectType<{
+        type: 'bool'
+        location: WebGLUniformLocation
+        set: (b: boolean) => void
+      }>()
     })
 
     describe('vectors', () => {
@@ -209,7 +259,12 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 2 for "uniform vec2 uVec2;". Got 3.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'vec2'
+        location: WebGLUniformLocation
+        set: (x: number, y: number) => void
+        setArray: (array: [number, number] | Float32Array | Float64Array) => void
+      }>()
 
       testUniform('uniform vec3 uVec3;', 'uVec3', {
         varType: 'vec3',
@@ -225,7 +280,13 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 3 for "uniform vec3 uVec3;". Got 4.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'vec3'
+        location: WebGLUniformLocation
+        set: (x: number, y: number, z: number) => void
+        setArray: (array: [number, number, number] | Float32Array | Float64Array) => void
+      }>()
+
       testUniform('uniform vec4 uVec4;', 'uVec4', {
         varType: 'vec4',
         set: [{ glSetter: 'uniform4f', args: [1, 2, 3, 4] }],
@@ -240,7 +301,12 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 4 for "uniform vec4 uVec4;". Got 5.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'vec4'
+        location: WebGLUniformLocation
+        set: (x: number, y: number, z: number, w: number) => void
+        setArray: (array: [number, number, number, number] | Float32Array | Float64Array) => void
+      }>()
     })
 
     describe('matrices', () => {
@@ -268,7 +334,11 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 4 for "uniform mat2 uMat2;". Got 3.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'mat2'
+        location: WebGLUniformLocation
+        setArray: (array: [number, number, number, number] | Float32Array | Float64Array) => void
+      }>()
 
       testUniform('uniform mat3 uMat3;', 'uMat3', {
         varType: 'mat3',
@@ -294,7 +364,13 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 9 for "uniform mat3 uMat3;". Got 10.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'mat3'
+        location: WebGLUniformLocation
+        setArray: (
+          array: [number, number, number, number, number, number, number, number, number] | Float32Array | Float64Array,
+        ) => void
+      }>()
 
       testUniform('uniform mat4 uMat4;', 'uMat4', {
         varType: 'mat4',
@@ -320,7 +396,33 @@ describe('createShaderProgram()', () => {
             throws: 'Expected an array of length 16 for "uniform mat4 uMat4;". Got 17.',
           },
         ],
-      })
+      }).expectType<{
+        type: 'mat4'
+        location: WebGLUniformLocation
+        setArray: (
+          array:
+            | [
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+                number,
+              ]
+            | Float32Array
+            | Float64Array,
+        ) => void
+      }>()
     })
   })
 
