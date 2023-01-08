@@ -12,7 +12,7 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 
 PR's welcome.
 
-- [ ] Inspect set values in tests without having to spy on `gl.uniform3f()` and it's friends.
+- [x] ~~Inspect set values in tests without having to spy on `gl.uniform3f()` and it's friends.~~
 - [ ] Texture samplers.
 - [ ] Set GLSL arrays like `uniform vec3 uPoints[10]`.
 - [ ] Set GLSL structs.
@@ -30,6 +30,7 @@ PR's welcome.
   - [`shaderProgram.use()`](#shaderprogramuse)
   - [`shaderProgram.attributes`](#shaderprogramattributes)
   - [`shaderProgram.uniforms`](#shaderprogramuniforms)
+- [Testing](#testing)
 
 ## Features
 
@@ -269,4 +270,57 @@ shader.uniforms.uColor.setArray(new Float32Array([1, 0, 1, 1]))
 
 // This will throw a runtime error.
 shader.uniforms.uColor.setArray(new Float32Array([1]))
+```
+
+# Testing
+
+Use `createShaderProgram.enableTestMode()` to capture the value that most recent value that was set on the `value` property of the uniform.
+
+**_NOTE:_** Test mode is set in the shader at creation time, and so it must be enabled _before_ the shader program is created.
+
+Given a shader definition which defines custom logic such as this:
+
+```typescript
+// my-shader.ts
+const vertSrc = /* glsl */ `
+  uniform vec2 uPos;
+  uniform vec2 uVel;
+  // ...
+`
+
+const fragSrc = /* glsl */ `
+  //...
+`
+
+function createMyShader(gl: WebGL2RenderingContext) {
+  const shaderProgram = createShaderProgram(gl, vertSrc, fragSrc)
+
+  return {
+    ...shaderProgram,
+    setPhysicalProperties(x: number, y: number, vx: number, vy: number) {
+      shaderProgram.uniforms.uPos.set(x, y)
+      shaderProgram.uniforms.uVel.set(vx, vy)
+    },
+  }
+}
+```
+
+You would test it like this:
+
+```typescript
+// my-shader.spec.ts
+beforeEach(() => {
+  createShaderProgram.enableTestMode()
+})
+
+afterEach(() => {
+  createShaderProgram.disableTestMode()
+})
+
+it('should set the uniform', () => {
+  const shader = createMyShader(gl)
+  shader.setPhysicalProperties(1, 2, 3, 4)
+  expect(shader.uniforms.uPos.value).toEqual([1, 2])
+  expect(shader.uniforms.uVel.value).toEqual([3, 4])
+})
 ```
