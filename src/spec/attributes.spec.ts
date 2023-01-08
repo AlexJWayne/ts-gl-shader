@@ -1,6 +1,6 @@
 import { describe } from 'vitest'
 
-import { testAttribute } from './test-attribute'
+import { testAttribute } from './helpers/test-attribute'
 
 describe('createShaderProgram()', () => {
   describe('attributes', () => {

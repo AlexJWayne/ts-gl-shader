@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { createShaderProgram } from '../shader-program'
 
-import { gl } from './mock-webgl-context'
+import { gl } from './helpers/mock-webgl-context'
 
 describe('createShaderProgram()', () => {
   describe('parsing', () => {

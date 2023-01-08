@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { createShaderProgram, ShaderProgram } from '../shader-program'
+import { createShaderProgram, ShaderProgram } from '../../shader-program'
 
 import { gl } from './mock-webgl-context'
 

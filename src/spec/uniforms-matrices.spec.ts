@@ -1,6 +1,6 @@
 import { describe } from 'vitest'
 
-import { testUniform } from './test-uniform'
+import { testUniform } from './helpers/test-uniform'
 
 describe('createShaderProgram()', () => {
   describe('uniforms', () => {
