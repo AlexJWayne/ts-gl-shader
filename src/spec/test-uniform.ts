@@ -114,8 +114,6 @@ export function testUniform<
 
               describe('test mode', () => {
                 it('does not save values when not in test mode', () => {
-                  console.log(args)
-
                   const shaderProgram = createShaderProgram(gl, src, src)
                   const uniform = getUniform(shaderProgram)
                   uniform.setArray(...args)
