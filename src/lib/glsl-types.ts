@@ -20,19 +20,6 @@ export type GlslVarsInfo<
   TQualifier extends GlslVarQualifier,
 > = RemoveComments<TSrc> extends `${string}${TQualifier}${infer TDeclaration};${infer TRest}`
   ? ParseTokens<TDeclaration> extends [infer TVarType extends GlslVarType, infer TIdenitifier extends string]
-    ? TIdenitifier extends `${infer TArrayIdentifier}[${number}]`
-      ? { [name in TArrayIdentifier]: { type: TVarType; isArray: true } } & GlslVarsInfo<TRest, TQualifier>
-      : { [name in TIdenitifier]: { type: TVarType } } & GlslVarsInfo<TRest, TQualifier>
+    ? { [name in TIdenitifier]: { type: TVarType } } & GlslVarsInfo<TRest, TQualifier>
     : {}
   : {}
-
-type A = GlslVarsInfo<
-  `
-  uniform
-  \t\tfloat
-         a[3]
-    \t;
-  uniform vec2 b;
-`,
-  'uniform'
->
