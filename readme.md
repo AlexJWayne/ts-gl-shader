@@ -29,8 +29,9 @@ PR's welcome.
 - [API Reference](#api-reference)
   - [`createShaderProgram()`](#createshaderprogram)
   - [`shaderProgram.use()`](#shaderprogramuse)
-  - [`shaderProgram.attributes`](#shaderprogramattributes)
-  - [`shaderProgram.uniforms`](#shaderprogramuniforms)
+  - [`shaderProgram.attributes[attributeName].set`](#shaderprogramattributesattributenameset)
+  - [`shaderProgram.uniforms[uniformName].set`](#shaderprogramuniformsuniformnameset)
+  - [`shaderProgram.uniforms[uniformName].setArray`](#shaderprogramuniformsuniformnamesetarray)
 - [Testing](#testing)
 
 ## Features
