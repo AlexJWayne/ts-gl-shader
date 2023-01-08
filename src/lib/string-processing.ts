@@ -24,18 +24,19 @@ export function parseDeclarations<TQualifier extends GlslVarQualifier>(
 }[] {
   const declarationRegex =
     qualifier === 'attribute' //
-      ? /(?:attribute)\s+\w+\s+\w+\s*;/gm
-      : /(?:uniform)\s+\w+\s+\w+\s*;/gm
+      ? /(?:attribute)(?:\s+(?:lowp|mediump|highp))?\s+(\w+)\s+(\w+)\s*;/gm
+      : /(?:uniform)(?:\s+(?:lowp|mediump|highp))?\s+(\w+)\s+(\w+)\s*;/gm
 
-  const declarations = src.match(declarationRegex) ?? []
+  const declarations = Array.from(src.matchAll(declarationRegex))
 
   return declarations.map((declaration) => {
-    const tokens = declaration.split(/\s+/gm).map((s) => s.trim()) as [TQualifier, GlslVarType, string]
+    const type = declaration[1] as GlslVarType
+    const identifier = declaration[2]
 
     return {
       qualifier,
-      type: tokens[1],
-      identifier: tokens[2].replace(/;$/, ''),
+      type,
+      identifier: identifier.replace(/;$/, ''),
     }
   })
 }

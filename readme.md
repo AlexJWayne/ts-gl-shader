@@ -13,7 +13,7 @@ This library will parse your GLSL shaders at the type level and provide an easy 
 PR's welcome.
 
 - [x] ~~Inspect set values in tests without having to spy on `gl.uniform3f()` and it's friends.~~
-- [ ] Precision overrides like `uniform highp vec3 uPos`.
+- [x] ~~Precision overrides like `uniform highp vec3 uPos`.~~
 - [ ] Texture samplers.
 - [ ] Set GLSL arrays like `uniform vec3 uPoints[10]`.
 - [ ] Set GLSL structs.
