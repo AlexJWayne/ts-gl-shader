@@ -3,6 +3,7 @@ import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
 import { removeComments } from './lib/string-processing'
 import { Expand, RemoveComments } from './lib/utility-types'
+import { testMode } from './test-mode'
 import { createUniforms, ShaderUniforms } from './uniform'
 
 type ShaderProgramInternal<
@@ -112,4 +113,14 @@ function createShader(gl: WebGL2RenderingContext, type: 'VERTEX_SHADER' | 'FRAGM
   // Report failure.
   const errorMessage = gl.getShaderInfoLog(shader)
   throw new Error(`Failed to compile ${type}\n${errorMessage}`)
+}
+
+/** Enables test mode which saves the most recently set value to the `values` property. */
+createShaderProgram.enableTestMode = () => {
+  testMode.current = true
+}
+
+/** Disables test mode which does not save the most recently set value. */
+createShaderProgram.disableTestMode = () => {
+  testMode.current = false
 }
