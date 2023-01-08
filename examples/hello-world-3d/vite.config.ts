@@ -6,5 +6,6 @@ export default defineConfig({
   base: '',
   build: {
     outDir: '../dist/hello-world-3d',
+    emptyOutDir: true,
   },
 })
