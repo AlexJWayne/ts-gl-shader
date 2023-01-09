@@ -1,9 +1,9 @@
 {
-  "name": "ts-gl-shader",
+  "name": "@alexjwayne/ts-gl-shader",
   "version": "0.1.0",
   "description": "Strongly typed no boilerplate WebGL shaders.",
-  "main": "dist/ts-gl-shader.cjs.js",
-  "module": "dist/ts-gl-shader.esm.js",
+  "main": "dist/alexjwayne-ts-gl-shader.cjs.js",
+  "module": "dist/alexjwayne-ts-gl-shader.esm.js",
   "scripts": {
     "tsc": "tsc --noEmit --incremental",
     "test": "vitest",

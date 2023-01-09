@@ -46,13 +46,13 @@ PR's welcome.
 Install the library as a production depedency.
 
 ```
-npm install ts-gl-shader
+npm install @alexjwayne/ts-gl-shader
 ```
 
 And then import the `createShaderProgram` function.
 
 ```typescript
-import { createShaderProgram } from 'ts-gl-shader'
+import { createShaderProgram } from '@alexjwayne/ts-gl-shader'
 ```
 
 ## Examples
