@@ -66,7 +66,7 @@ First create a file for your shader.
 
 ```typescript
 // my-shader.ts
-import { createShaderProgram } from 'ts-gl-shader'
+import { createShaderProgram } from '@alexjwayne/ts-gl-shader'
 
 const vertSrc = /* glsl */ `
   precision mediump float;
