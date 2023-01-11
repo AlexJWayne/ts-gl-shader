@@ -8,11 +8,11 @@ import { gl } from './mock-webgl-context'
 /** Test a shader uniform property against the expectation in `expected`. */
 export function testUniform<
   TSrc extends string,
-  TIdentifier extends keyof TShaderProgram['uniforms'] & string,
+  TIdentifier extends string,
   TShaderProgram extends ShaderProgram<string, string> = ShaderProgram<TSrc, TSrc>,
 >(
   src: TSrc,
-  identifier: TIdentifier,
+  identifier: string,
   expected: {
     /** The glsl var type as written in the source code. */
     varType: string
@@ -34,7 +34,17 @@ export function testUniform<
   },
 ) {
   function getUniform(shaderProgram: ShaderProgram<string, string>): any {
-    return shaderProgram.uniforms[identifier]
+    let current = shaderProgram.uniforms as any
+
+    // convert "abc[123].def" to "abc.123.def".
+    const parts = identifier.replace(/\[(\d+)\]/, '.$1').split('.')
+
+    // Recursively find the uniform.
+    for (const part of parts) {
+      if (part in current) current = current[part]
+      else throw new Error(`Could not find uniform "${identifier}"`)
+    }
+    return current
   }
 
   describe(`"uniform ${identifier} ${expected.varType}"`, () => {

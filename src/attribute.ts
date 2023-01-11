@@ -23,9 +23,9 @@ export function createAttributes<ShaderSrc extends string>(
   program: WebGLProgram,
   shaderSrc: ShaderSrc,
 ): ShaderAttributes<GlslVarsInfo<ShaderSrc, 'attribute'>> {
-  const attributeDeclarations = parseDeclarations('attribute', shaderSrc)
+  const declarations = parseDeclarations('attribute', shaderSrc)
 
-  return attributeDeclarations.reduce((attributes, declaration) => {
+  return declarations.reduce((attributes, declaration) => {
     const { type, identifier } = declaration
     const attributeSize = Number(type.match(/([234])$/)?.[1]) || 1
 

@@ -104,9 +104,9 @@ export function createUniforms<ShaderSrc extends string>(
   program: WebGLProgram,
   shaderSrc: ShaderSrc,
 ): ShaderUniforms<GlslVarsInfo<ShaderSrc, 'uniform'>> {
-  const uniformDeclarations = parseDeclarations('uniform', shaderSrc)
+  const declarations = parseDeclarations('uniform', shaderSrc)
 
-  return uniformDeclarations.reduce((uniforms, declaration) => {
+  return declarations.reduce((uniforms, declaration) => {
     const { type, identifier } = declaration
     uniforms[identifier] = createUniform(gl, program, type, identifier)
     return uniforms
