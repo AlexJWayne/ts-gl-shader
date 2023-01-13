@@ -1,4 +1,4 @@
-import { describe } from 'vitest'
+import { describe, expectTypeOf } from 'vitest'
 
 import { testUniform } from './helpers/test-uniform'
 
@@ -21,12 +21,15 @@ describe('createShaderProgram()', () => {
             },
           ],
         },
-      ).expectType<{
-        type: 'float'
-        location: WebGLUniformLocation
-        set: (n: number) => void
-        value: never
-      }>()
+        (shaderProgram) => {
+          expectTypeOf(shaderProgram.uniforms.light.intensity).toEqualTypeOf<{
+            type: 'float'
+            location: WebGLUniformLocation
+            set: (n: number) => void
+            value: never
+          }>()
+        },
+      )
     })
   })
 })

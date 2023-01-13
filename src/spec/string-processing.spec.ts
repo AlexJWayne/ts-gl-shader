@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseDeclarations, parseStructs, removeComments } from './string-processing'
+import { parseDeclarations, parseStructs, removeComments } from '../lib/string-processing'
 
 describe('string processing', () => {
   describe('removeComments', () => {
@@ -43,15 +43,15 @@ describe('string processing', () => {
 
   describe('parseStructs', () => {
     it('parses a simple struct', () => {
-      expect(parseStructs(`struct Light { float intensity; };`)).toEqual([
-        { identifier: 'Light', members: [{ qualifier: 'member', type: 'float', identifier: 'intensity' }] },
-      ])
+      expect(parseStructs(`struct Light { float intensity; };`)).toEqual({
+        Light: [{ qualifier: 'member', type: 'float', identifier: 'intensity' }],
+      })
     })
 
     it('parses a struct is precision', () => {
-      expect(parseStructs(`struct Light { highp float intensity; };`)).toEqual([
-        { identifier: 'Light', members: [{ qualifier: 'member', type: 'float', identifier: 'intensity' }] },
-      ])
+      expect(parseStructs(`struct Light { highp float intensity; };`)).toEqual({
+        Light: [{ qualifier: 'member', type: 'float', identifier: 'intensity' }],
+      })
     })
   })
 })

@@ -1,16 +1,13 @@
 import { GlslVarQualifier, GlslVarType } from './glsl-types'
 import { RemoveComments } from './utility-types'
 
-type Declaration<TQualifier extends GlslVarQualifier | 'member'> = {
+export type Declaration<TQualifier extends GlslVarQualifier | 'member'> = {
   qualifier: TQualifier
   type: GlslVarType
   identifier: string
 }
 
-type Struct = {
-  identifier: string
-  members: Declaration<'member'>[]
-}
+export type Structs = Record<string, Declaration<'member'>[]>
 
 /** Removes all blocks comment and line comments from a source code string. */
 export function removeComments<T extends string>(src: T): RemoveComments<T> {
@@ -51,14 +48,14 @@ export function parseDeclarations(
   return declarations
 }
 
-export function parseStructs(src: string): Struct[] {
+/** Parse and return structs and their members from `src`. */
+export function parseStructs(src: string): Structs {
   const structMatches = Array.from(src.matchAll(structRegex))
 
-  const structs = structMatches.map((struct) => {
+  return structMatches.reduce<Structs>((structs, struct) => {
     const [_, identifier, body] = struct
     const members = parseDeclarations('member', body)
-    return { identifier, members }
-  })
-
-  return structs
+    structs[identifier] = members
+    return structs
+  }, {})
 }

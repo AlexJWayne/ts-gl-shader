@@ -1,6 +1,6 @@
-import { GlslVarsInfo, GlslVarType } from './lib/glsl-types'
+import { GlslVarsInfo } from './lib/glsl-types'
 import { handleGlError } from './lib/handle-gl-error'
-import { parseDeclarations } from './lib/string-processing'
+import { parseDeclarations, parseStructs, Structs } from './lib/string-processing'
 import { testMode } from './test-mode'
 
 // 2x2 matrix = 4 elements
@@ -99,26 +99,29 @@ export type ShaderUniform<TType extends keyof UniformSetterArgs | keyof UniformS
       }
     : {})
 
+/** Returns a uniforms object to be available on `shaderProgram.uniforms` */
 export function createUniforms<ShaderSrc extends string>(
   gl: WebGL2RenderingContext,
   program: WebGLProgram,
   shaderSrc: ShaderSrc,
 ): ShaderUniforms<GlslVarsInfo<ShaderSrc, 'uniform'>> {
   const declarations = parseDeclarations('uniform', shaderSrc)
+  const structs = parseStructs(shaderSrc)
 
   return declarations.reduce((uniforms, declaration) => {
     const { type, identifier } = declaration
-    uniforms[identifier] = createUniform(gl, program, type, identifier)
+
+    uniforms[identifier] =
+      type in structs //
+        ? createStruct(gl, program, structs, type)
+        : createUniform(gl, program, type, identifier)
+
     return uniforms
   }, {} as any)
 }
 
-export function createUniform<TVarType extends GlslVarType>(
-  gl: WebGL2RenderingContext,
-  program: WebGLProgram,
-  type: TVarType,
-  identifier: string,
-) {
+/** Returns an object for a single uniform. */
+export function createUniform(gl: WebGL2RenderingContext, program: WebGLProgram, type: string, identifier: string) {
   const location = gl.getUniformLocation(program, identifier)
   handleGlError(gl, `createShaderProgram gl.getUniformLocation() ${identifier}`)
 
@@ -139,10 +142,18 @@ export function createUniform<TVarType extends GlslVarType>(
   return uniform
 }
 
-function createUniformSetter<T extends GlslVarType>(
+/** Create a uniform that is a struct of other values. */
+function createStruct(gl: WebGL2RenderingContext, program: WebGLProgram, structs: Structs, type: string): any {
+  return structs[type].reduce((structObject, member) => {
+    structObject[member.identifier] = createUniform(gl, program, member.type, member.identifier)
+    return structObject
+  }, {} as any)
+}
+
+function createUniformSetter(
   gl: WebGL2RenderingContext,
   location: WebGLUniformLocation | null,
-  type: T,
+  type: string,
   didSet: undefined | ((value: any) => void),
 ) {
   if (location === null) return () => undefined
@@ -194,10 +205,10 @@ function createUniformSetter<T extends GlslVarType>(
   return null
 }
 
-function createUniformArraySetter<TVarType extends GlslVarType>(
+function createUniformArraySetter(
   gl: WebGL2RenderingContext,
   location: WebGLUniformLocation | null,
-  type: TVarType,
+  type: string,
   identifier: string,
   didSet: undefined | ((value: any) => void),
 ) {

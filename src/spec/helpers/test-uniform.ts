@@ -32,6 +32,8 @@ export function testUniform<
       expectedValues?: any[]
     } & ({ testModeValues: any } | { throws: string }))[]
   },
+
+  additionalTests?: (shaderProgram: TShaderProgram) => void,
 ) {
   function getUniform(shaderProgram: ShaderProgram<string, string>): any {
     let current = shaderProgram.uniforms as any
@@ -147,8 +149,5 @@ export function testUniform<
     }
   })
 
-  return {
-    /** Provide a generic type parameter here to expect the uniform object to extend this type. */
-    expectType<T extends TShaderProgram['uniforms'][TIdentifier]>() {},
-  }
+  additionalTests?.(createShaderProgram(gl, src, src) as TShaderProgram)
 }
