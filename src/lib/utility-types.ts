@@ -48,4 +48,12 @@ type CollapseWhitespace<T extends string> = //
     ? CollapseWhitespace<`${TBefore} ${After}`>
     : T
 
-export type ParseTokens<T extends string> = Split<CollapseWhitespace<Trim<UnifyWhiteSpace<T>>>, ' '>
+/**
+ * Sanitize source code for easy parsing.
+ * - Trim whitespace off the ends.
+ * - Collapse all consecutive whitespace to a single space character.
+ */
+export type Clean<T extends string> = CollapseWhitespace<Trim<UnifyWhiteSpace<T>>>
+
+/** Returns a tuple of the whitespace separated tokens in a string. */
+export type ParseTokens<T extends string> = Split<Clean<T>, ' '>

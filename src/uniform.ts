@@ -50,9 +50,9 @@ export type UniformSetterArrayArgs = {
 }
 
 /** Type of the `uniforms` property of the shader object. */
-export type ShaderUniforms<T extends GlslVarsInfo<string, 'uniform'>> = {
-  [K in keyof T & string]: T[K] extends { type: keyof (UniformSetterArgs & UniformSetterArrayArgs) } //
-    ? ShaderUniform<T[K]['type']>
+export type ShaderUniforms<TVars extends GlslVarsInfo<string, 'uniform'>> = {
+  [K in keyof TVars & string]: TVars[K] extends { type: keyof (UniformSetterArgs & UniformSetterArrayArgs) } //
+    ? ShaderUniform<TVars[K]['type']>
     : never
 }
 
