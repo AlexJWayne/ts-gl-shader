@@ -1,6 +1,6 @@
 {
   "name": "@alexjwayne/ts-gl-shader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Strongly typed no boilerplate WebGL shaders.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,7 +14,7 @@
     "example": "run(){ vite examples/$1; }; run",
     "check": "npm i && npm run tsc && npm test -- run && npm run build",
     "deploy": "gh-pages -d examples/dist",
-    "release": "npm run check && npm run deploy && npm publish"
+    "release": "npx changeset version && npm run check && npm run deploy && npm publish"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.26.0",
     "@vitest/ui": "^0.26.3",
     "gh-pages": "^4.0.0",
     "prettier": "^2.8.1",
